@@ -1,0 +1,44 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer>
+	<div class="footer-inner">
+		<span class="copyright">&copy; {year} Earn</span>
+		<span class="sep" aria-hidden="true">&middot;</span>
+		<a href="https://github.com/waream2" target="_blank" rel="noopener noreferrer">github</a>
+	</div>
+</footer>
+
+<style>
+	footer {
+		margin-top: var(--space-4xl);
+		padding: var(--space-xl) var(--space-lg) var(--space-2xl);
+		border-top: 1px solid var(--border-subtle);
+	}
+
+	.footer-inner {
+		max-width: var(--max-width);
+		margin: 0 auto;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--space-sm);
+		font-size: 0.78rem;
+		color: var(--text-tertiary);
+	}
+
+	.sep {
+		user-select: none;
+	}
+
+	a {
+		color: var(--text-tertiary);
+		text-decoration: none;
+		transition: color var(--duration) var(--ease-out);
+	}
+
+	a:hover {
+		color: var(--text-secondary);
+	}
+</style>

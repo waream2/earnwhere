@@ -1,0 +1,142 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+
+interface Props {
+	title: string;
+	date: Date;
+	category: string;
+	hook: string;
+}
+
+const { title, date, category, hook } = Astro.props;
+---
+
+<html lang="en">
+	<head>
+		<BaseHead title={title} description={hook} />
+		<style>
+			article {
+				max-width: var(--max-width);
+				margin: 0 auto;
+				padding: var(--space-4xl) var(--space-lg) var(--space-3xl);
+			}
+
+			.post-header {
+				text-align: center;
+				margin-bottom: var(--space-3xl);
+			}
+
+			.post-header h1 {
+				font-family: var(--font-display);
+				font-size: 2.75rem;
+				font-weight: 400;
+				line-height: 1.15;
+				letter-spacing: -0.02em;
+				margin: 0 0 var(--space-lg);
+				color: var(--text);
+			}
+
+			.post-meta {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: var(--space-md);
+				margin-bottom: var(--space-2xl);
+			}
+
+			.post-meta .separator {
+				width: 3px;
+				height: 3px;
+				border-radius: 50%;
+				background: var(--text-tertiary);
+				flex-shrink: 0;
+			}
+
+			.hook {
+				font-size: 1.15rem;
+				line-height: 1.7;
+				color: var(--text-secondary);
+				margin: 0;
+				max-width: 560px;
+				margin-left: auto;
+				margin-right: auto;
+			}
+
+			.post-divider {
+				border: none;
+				border-top: 1px solid var(--border);
+				margin: 0 0 var(--space-3xl);
+			}
+
+			.back-link {
+				display: inline-flex;
+				align-items: center;
+				gap: var(--space-sm);
+				font-family: var(--font-mono);
+				font-size: 0.8rem;
+				color: var(--text-tertiary);
+				margin-top: var(--space-4xl);
+				transition: color var(--duration) var(--ease-out);
+			}
+
+			.back-link:hover {
+				color: var(--accent);
+			}
+
+			.back-link span {
+				transition: transform var(--duration) var(--ease-out);
+			}
+
+			.back-link:hover span {
+				transform: translateX(-3px);
+			}
+
+			@media (max-width: 640px) {
+				article {
+					padding: var(--space-2xl) var(--space-md) var(--space-2xl);
+				}
+
+				.post-header h1 {
+					font-size: 2rem;
+				}
+
+				.post-meta {
+					flex-wrap: wrap;
+					gap: var(--space-sm);
+				}
+
+				.hook {
+					font-size: 1.05rem;
+				}
+			}
+		</style>
+	</head>
+
+	<body>
+		<Header />
+		<main class="page-content">
+			<article>
+				<div class="post-header">
+					<h1>{title}</h1>
+					<div class="post-meta">
+						<FormattedDate date={date} />
+						<span class="separator"></span>
+						<span class="category-tag" data-category={category}>{category}</span>
+					</div>
+					<p class="hook">{hook}</p>
+				</div>
+				<hr class="post-divider" />
+				<div class="prose">
+					<slot />
+				</div>
+				<a href="/" class="back-link">
+					<span>&larr;</span> back to feed
+				</a>
+			</article>
+		</main>
+		<Footer />
+	</body>
+</html>

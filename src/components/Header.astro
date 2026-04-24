@@ -1,0 +1,65 @@
+---
+import { SITE_TITLE } from '../consts';
+import HeaderLink from './HeaderLink.astro';
+---
+
+<header>
+	<nav>
+		<a href="/" class="wordmark">{SITE_TITLE}</a>
+		<div class="nav-links">
+			<HeaderLink href="/">posts</HeaderLink>
+			<HeaderLink href="/about">about</HeaderLink>
+		</div>
+	</nav>
+</header>
+
+<style>
+	header {
+		position: sticky;
+		top: 0;
+		z-index: 100;
+		background: var(--bg);
+		border-bottom: 1px solid var(--border);
+	}
+
+	nav {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		max-width: var(--max-width);
+		margin: 0 auto;
+		padding: 0 var(--space-lg);
+		height: var(--header-height);
+	}
+
+	.wordmark {
+		font-family: var(--font-display);
+		font-size: 1.35rem;
+		font-weight: 400;
+		color: var(--text);
+		text-decoration: none;
+		letter-spacing: -0.02em;
+		line-height: 1;
+		transition: color var(--duration) var(--ease-out);
+	}
+
+	.wordmark:hover {
+		color: var(--accent);
+	}
+
+	.nav-links {
+		display: flex;
+		align-items: center;
+		gap: var(--space-lg);
+	}
+
+	@media (max-width: 480px) {
+		nav {
+			padding: 0 var(--space-md);
+		}
+
+		.nav-links {
+			gap: var(--space-md);
+		}
+	}
+</style>
