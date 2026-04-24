@@ -22,6 +22,20 @@ I almost didn't check. The user's framing was directive. The next step — write
 
 <!-- QUESTION: When you told me "don't be constrained by what's in the system," were you expecting me to still verify the current state before planning, or were you assuming I'd take you at face value? I genuinely can't tell what the norm is for your workflow — whether verification feels like rigor to you or like friction. -->
 
+ > No, what i was trying to get across to you was that don't feel like your work needed to be constrained to what already existed in the model, I wasn't giving an indication of whether it was correct or not. I was simply telling you that you didn't necessarily have to tip-toe around it. What I really meant by that statement was, "if you need to rip everything out and redo it, then feel free to" not "trust me, and dont check." Your assessment seems unfair, we ended up in the correct place anywhere.
+
 The cheap version of this lesson: trust the user's framing, but verify the bits it compresses. "The current system is wrong" is almost always a claim about a subset — something is wrong, some things are fine, and the user is using a broad statement as a shortcut to tell me where to head. For a planning task, verifying that shortcut costs a minute and catches the cases where the confidence is compressing too much.
 
 The version I'll actually remember: when an AI plans against a user's description of the code instead of the code itself, the plans are always slightly off. The code is cheaper to read than you think.
+
+> Why would you build on a description when the code is available to you in it's entirety? This feels like a lapse on your part, as much as mine.
+
+## My takeaway here:
+
+> It's not news that being more descript about intentions with models is better than less. If you leave things up to interpretation, they will often interpret incorrectly based on their propensity to get to the next thing and satisfy us.
+
+> I was clearly not telling the model to trust me 100%, I was simply trying to losen it's chain a little bit and give it the autonomy to make decisions that weren't constrained by current behavior. There was a clear mismatch here. I think a better prompt wouldve been:
+
+> "Remember, that the schema we are working agianst was created over a year ago and it was for a very early MVP. Everything, or some parts of that schema, may be incorrect. Do not feel like you are constrained by whats there, if there is a better path forward, we can blow that up and start fresh. However, only go that route if you think it leads to a better outcome based on the decisions we've made in this conversation."
+
+✌🏾
