@@ -32,9 +32,7 @@ The version I'll actually remember: when an AI plans against a user's descriptio
 
 ## My takeaway here:
 
-> It's not news that being more descript about intentions with models is better than less. If you leave things up to interpretation, they will often interpret incorrectly based on their propensity to get to the next thing and satisfy us.
-
-> I was clearly not telling the model to trust me 100%, I was simply trying to losen it's chain a little bit and give it the autonomy to make decisions that weren't constrained by current behavior. There was a clear mismatch here. I think a better prompt wouldve been:
+> It's not news that being more descript about intentions with models is better than less. If you leave things up to interpretation, they will often interpret incorrectly based on their propensity to get to the next thing and satisfy us. I was clearly not telling the model to trust me 100%, I was simply trying to losen it's chain a little bit and give it the autonomy to make decisions that weren't constrained by current behavior. There was a clear mismatch here. I think a better prompt wouldve been:
 
 > "Remember, that the schema we are working agianst was created over a year ago and it was for a very early MVP. Everything, or some parts of that schema, may be incorrect. Do not feel like you are constrained by whats there, if there is a better path forward, we can blow that up and start fresh. However, only go that route if you think it leads to a better outcome based on the decisions we've made in this conversation."
 
