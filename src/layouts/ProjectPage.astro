@@ -1,0 +1,210 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface ProjectLink {
+	label: string;
+	href: string;
+}
+
+interface Props {
+	title: string;
+	summary: string;
+	date: Date;
+	category: 'professional' | 'personal' | 'craft';
+	role?: string;
+	stack?: string[];
+	timeline?: string;
+	status?: 'shipped' | 'archived' | 'in-progress';
+	links?: ProjectLink[];
+}
+
+const { title, summary, category, role, stack, timeline, status, links } = Astro.props;
+---
+
+<html lang="en">
+	<head>
+		<BaseHead title={title} description={summary} />
+		<style>
+			article {
+				max-width: var(--max-width);
+				margin: 0 auto;
+				padding: var(--space-4xl) var(--space-lg) var(--space-3xl);
+			}
+
+			.project-header {
+				text-align: center;
+				margin-bottom: var(--space-3xl);
+			}
+
+			.project-header h1 {
+				font-family: var(--font-display);
+				font-size: 2.75rem;
+				font-weight: 400;
+				line-height: 1.15;
+				letter-spacing: -0.02em;
+				margin: 0 0 var(--space-lg);
+				color: var(--text);
+			}
+
+			.summary {
+				font-size: 1.15rem;
+				line-height: 1.7;
+				color: var(--text-secondary);
+				margin: 0 auto var(--space-2xl);
+				max-width: 560px;
+			}
+
+			.project-facts {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: var(--space-md) var(--space-xl);
+				font-family: var(--font-mono);
+				font-size: 0.78rem;
+				color: var(--text-tertiary);
+				text-transform: uppercase;
+				letter-spacing: 0.06em;
+				margin: 0 auto var(--space-lg);
+				max-width: 640px;
+			}
+
+			.fact .label {
+				color: var(--text-tertiary);
+				margin-right: var(--space-xs);
+				opacity: 0.7;
+			}
+
+			.fact .value {
+				color: var(--text-secondary);
+				text-transform: none;
+				letter-spacing: 0;
+			}
+
+			.fact .category-link {
+				color: var(--accent);
+				text-decoration: none;
+				border-bottom: 1px solid transparent;
+				transition: border-color var(--duration) var(--ease-out);
+			}
+
+			.fact .category-link:hover {
+				border-bottom-color: var(--accent);
+			}
+
+			.fact .value.status {
+				color: var(--accent);
+				text-transform: uppercase;
+				letter-spacing: 0.06em;
+			}
+
+			.project-links {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: var(--space-md);
+				margin-top: var(--space-md);
+			}
+
+			.project-links a {
+				font-family: var(--font-mono);
+				font-size: 0.8rem;
+				color: var(--accent);
+				text-decoration: none;
+				border-bottom: 1px solid var(--border);
+				padding-bottom: 2px;
+				transition: border-color var(--duration) var(--ease-out);
+			}
+
+			.project-links a:hover {
+				border-bottom-color: var(--accent);
+			}
+
+			.project-divider {
+				border: none;
+				border-top: 1px solid var(--border);
+				margin: 0 0 var(--space-3xl);
+			}
+
+			.back-link {
+				display: inline-flex;
+				align-items: center;
+				gap: var(--space-sm);
+				font-family: var(--font-mono);
+				font-size: 0.8rem;
+				color: var(--text-tertiary);
+				margin-top: var(--space-4xl);
+				transition: color var(--duration) var(--ease-out);
+			}
+
+			.back-link:hover {
+				color: var(--accent);
+			}
+
+			.back-link span {
+				transition: transform var(--duration) var(--ease-out);
+			}
+
+			.back-link:hover span {
+				transform: translateX(-3px);
+			}
+
+			@media (max-width: 640px) {
+				article {
+					padding: var(--space-2xl) var(--space-md) var(--space-2xl);
+				}
+
+				.project-header h1 {
+					font-size: 2rem;
+				}
+
+				.summary {
+					font-size: 1.05rem;
+				}
+			}
+		</style>
+	</head>
+
+	<body>
+		<Header />
+		<main class="page-content">
+			<article>
+				<div class="project-header">
+					<h1>{title}</h1>
+					<p class="summary">{summary}</p>
+					<div class="project-facts">
+						<span class="fact"><span class="label">category</span><a class="value category-link" href={`/work/${category}`}>{category}</a></span>
+						{role && (
+							<span class="fact"><span class="label">role</span><span class="value">{role}</span></span>
+						)}
+						{timeline && (
+							<span class="fact"><span class="label">when</span><span class="value">{timeline}</span></span>
+						)}
+						{status && (
+							<span class="fact"><span class="label">status</span><span class="value status">{status}</span></span>
+						)}
+						{stack && stack.length > 0 && (
+							<span class="fact"><span class="label">stack</span><span class="value">{stack.join(', ')}</span></span>
+						)}
+					</div>
+					{links && links.length > 0 && (
+						<div class="project-links">
+							{links.map((link) => (
+								<a href={link.href} target="_blank" rel="noopener noreferrer">{link.label} &rarr;</a>
+							))}
+						</div>
+					)}
+				</div>
+				<hr class="project-divider" />
+				<div class="prose">
+					<slot />
+				</div>
+				<a href="/work" class="back-link">
+					<span>&larr;</span> back to work
+				</a>
+			</article>
+		</main>
+		<Footer />
+	</body>
+</html>

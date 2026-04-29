@@ -1,0 +1,70 @@
+---
+interface Props {
+	active: 'all' | 'professional' | 'personal' | 'craft';
+}
+
+const { active } = Astro.props;
+
+const filters = [
+	{ key: 'all' as const, label: 'all', href: '/work' },
+	{ key: 'professional' as const, label: 'professional', href: '/work/professional' },
+	{ key: 'personal' as const, label: 'personal', href: '/work/personal' },
+	{ key: 'craft' as const, label: 'craft', href: '/work/craft' },
+];
+---
+
+<nav class="filter" aria-label="Filter projects by category">
+	{filters.map((f) => (
+		<a
+			href={f.href}
+			class:list={['filter-pill', { active: active === f.key }]}
+			aria-current={active === f.key ? 'page' : undefined}
+		>
+			{f.label}
+		</a>
+	))}
+</nav>
+
+<style>
+	.filter {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: var(--space-xs);
+		max-width: var(--max-width);
+		margin: 0 auto var(--space-2xl);
+		padding: 0 var(--space-lg);
+	}
+
+	.filter-pill {
+		font-family: var(--font-mono);
+		font-size: 0.78rem;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--text-tertiary);
+		text-decoration: none;
+		padding: 0.4rem 0.85rem;
+		border: 1px solid var(--border);
+		border-radius: 999px;
+		transition: color var(--duration) var(--ease-out),
+			border-color var(--duration) var(--ease-out),
+			background var(--duration) var(--ease-out);
+	}
+
+	.filter-pill:hover {
+		color: var(--text);
+		border-color: var(--text-tertiary);
+	}
+
+	.filter-pill.active {
+		color: var(--bg);
+		background: var(--accent);
+		border-color: var(--accent);
+	}
+
+	@media (max-width: 480px) {
+		.filter {
+			padding: 0 var(--space-md);
+		}
+	}
+</style>
