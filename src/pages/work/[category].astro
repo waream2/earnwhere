@@ -1,0 +1,89 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import ProjectList from '../../components/ProjectList.astro';
+import WorkFilter from '../../components/WorkFilter.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
+
+type Category = 'professional' | 'personal' | 'craft';
+
+const TAGLINES: Record<Category, string> = {
+	professional: 'Things I built in a professional context — for an employer or client.',
+	personal: 'Things I built for myself — side projects, experiments, and small bets.',
+	craft: 'Things I made off-screen — work that lives outside a code editor.',
+};
+
+export async function getStaticPaths() {
+	return (['professional', 'personal', 'craft'] as const).map((category) => ({
+		params: { category },
+	}));
+}
+
+const { category } = Astro.params as { category: Category };
+
+const projects = (await getCollection('projects'))
+	.filter((p) => !p.data.draft && p.data.category === category)
+	.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const tagline = TAGLINES[category];
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Work · ${category} — ${SITE_TITLE}`} description={tagline} />
+		<style>
+			.work-header {
+				text-align: center;
+				padding: var(--space-4xl) var(--space-lg) var(--space-lg);
+				max-width: var(--max-width);
+				margin: 0 auto;
+			}
+
+			.work-header h1 {
+				font-family: var(--font-display);
+				font-size: 3rem;
+				font-weight: 400;
+				letter-spacing: -0.03em;
+				margin: 0;
+				line-height: 1;
+			}
+
+			.work-header .tagline {
+				font-family: var(--font-body);
+				font-size: 1.05rem;
+				color: var(--text-tertiary);
+				margin: var(--space-sm) 0 0;
+				font-style: italic;
+			}
+
+			@media (max-width: 640px) {
+				.work-header h1 {
+					font-size: 2.5rem;
+				}
+
+				.work-header {
+					padding: var(--space-3xl) var(--space-lg) var(--space-md);
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main class="page-content">
+			<section class="work-header">
+				<h1>work</h1>
+				<p class="tagline">{tagline}</p>
+			</section>
+
+			<WorkFilter active={category} />
+			<ProjectList
+				projects={projects}
+				emptyMessage={`Nothing under ${category} yet.`}
+			/>
+		</main>
+		<Footer />
+	</body>
+</html>
