@@ -18,6 +18,7 @@ const projects = defineCollection({
 	schema: z.object({
 		title: z.string(),
 		summary: z.string(),
+		tldr: z.string().optional(),
 		date: z.coerce.date(),
 		category: z.enum(['professional', 'personal', 'craft']),
 		role: z.string().optional(),

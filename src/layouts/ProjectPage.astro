@@ -11,6 +11,7 @@ interface ProjectLink {
 interface Props {
 	title: string;
 	summary: string;
+	tldr?: string;
 	date: Date;
 	category: 'professional' | 'personal' | 'craft';
 	role?: string;
@@ -20,7 +21,7 @@ interface Props {
 	links?: ProjectLink[];
 }
 
-const { title, summary, category, role, stack, timeline, status, links } = Astro.props;
+const { title, summary, tldr, category, role, stack, timeline, status, links } = Astro.props;
 ---
 
 <html lang="en">
@@ -127,6 +128,33 @@ const { title, summary, category, role, stack, timeline, status, links } = Astro
 				margin: 0 0 var(--space-3xl);
 			}
 
+			.tldr {
+				max-width: var(--max-width);
+				margin: 0 auto var(--space-3xl);
+				padding: var(--space-lg) var(--space-xl);
+				background: var(--bg-subtle);
+				border: 1px solid var(--border);
+				border-radius: 6px;
+			}
+
+			.tldr-label {
+				display: block;
+				font-family: var(--font-mono);
+				font-size: 0.7rem;
+				font-weight: 500;
+				text-transform: uppercase;
+				letter-spacing: 0.12em;
+				color: var(--text-tertiary);
+				margin-bottom: var(--space-sm);
+			}
+
+			.tldr p {
+				margin: 0;
+				font-size: 1.02rem;
+				line-height: 1.65;
+				color: var(--text);
+			}
+
 			.back-link {
 				display: inline-flex;
 				align-items: center;
@@ -197,6 +225,12 @@ const { title, summary, category, role, stack, timeline, status, links } = Astro
 					)}
 				</div>
 				<hr class="project-divider" />
+				{tldr && (
+					<aside class="tldr">
+						<span class="tldr-label">TL;DR</span>
+						<p>{tldr}</p>
+					</aside>
+				)}
 				<div class="prose">
 					<slot />
 				</div>
