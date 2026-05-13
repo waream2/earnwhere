@@ -1,0 +1,485 @@
+---
+/**
+ * <SpacetimeFabric /> — global cursor-reactive tilted plane + drifting meteors
+ *                      + secret black-hole mode.
+ *
+ * Normal: the cursor warps a perspective-projected grid. Meteors streak above.
+ *
+ * Black-hole mode: the well becomes a singularity at viewport center that
+ * drifts toward the cursor with heavy lag. The fabric warp switches from a
+ * bounded cursor-pull to a gravitational (1/r²) pull; points inside the event
+ * horizon collapse to the singularity. The component also applies CSS
+ * transforms to top-level DOM blocks so the entire page spirals in.
+ *
+ * Triggered by a `cursor-mass-change` event whose `detail.blackHole === true`.
+ */
+
+interface Props {
+	cols?: number;
+	rows?: number;
+	segs?: number;
+	strength?: number;
+	radius?: number;
+	smoothing?: number;
+	horizon?: number;
+	farWidth?: number;
+	nearWidth?: number;
+	perspective?: number;
+}
+
+const {
+	cols = 24,
+	rows = 20,
+	segs = 50,
+	strength = 0.13,
+	radius = 0.32,
+	smoothing = 0.10,
+	horizon = -0.20,
+	farWidth = 1.30,
+	nearWidth = 1.85,
+	perspective = 1.45,
+} = Astro.props;
+---
+
+<canvas
+	class="spacetime-fabric"
+	aria-hidden="true"
+	data-cols={cols}
+	data-rows={rows}
+	data-segs={segs}
+	data-strength={strength}
+	data-radius={radius}
+	data-smoothing={smoothing}
+	data-horizon={horizon}
+	data-far-width={farWidth}
+	data-near-width={nearWidth}
+	data-perspective={perspective}
+></canvas>
+
+<script>
+	type Star = {
+		x: number;
+		y: number;
+		vx: number;
+		vy: number;
+		life: number;
+		maxLife: number;
+		length: number;
+	};
+
+	type WarpTarget = {
+		el: HTMLElement;
+		cx: number;
+		cy: number;
+	};
+
+	function init() {
+		const canvas = document.querySelector<HTMLCanvasElement>('.spacetime-fabric');
+		if (!canvas) return;
+		const ctx = canvas.getContext('2d');
+		if (!ctx) return;
+
+		const ds = canvas.dataset;
+		const cols = Number(ds.cols) || 24;
+		const rows = Number(ds.rows) || 20;
+		const segs = Number(ds.segs) || 50;
+		const strength = Number(ds.strength) || 0.13;
+		const radiusRel = Number(ds.radius) || 0.32;
+		const smoothing = Number(ds.smoothing) || 0.10;
+		const horizonFrac = Number(ds.horizon) || -0.20;
+		const farWidthFrac = Number(ds.farWidth) || 1.30;
+		const nearWidthFrac = Number(ds.nearWidth) || 1.85;
+		const perspPow = Number(ds.perspective) || 1.45;
+
+		const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		const isTouch = window.matchMedia('(pointer: coarse) and (hover: none)').matches;
+
+		let w = 0, h = 0, R = 0, dpr = 1;
+		let wellX = 0, wellY = 0;
+		let targetX = 0, targetY = 0;
+		let massMultiplier = 1;
+
+		// ── Black-hole state ──────────────────────────────────────
+		let blackHoleMode = false;
+		let bhIntensity = 0;     // 0..1, eases in/out
+		let bhX = 0, bhY = 0;
+		let warpTargets: WarpTarget[] = [];
+
+		function resize() {
+			dpr = Math.min(window.devicePixelRatio || 1, 2);
+			w = window.innerWidth;
+			h = window.innerHeight;
+			R = Math.max(w, h);
+			canvas.width = Math.floor(w * dpr);
+			canvas.height = Math.floor(h * dpr);
+			canvas.style.width = w + 'px';
+			canvas.style.height = h + 'px';
+			ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+			if (wellX === 0 && wellY === 0) {
+				wellX = targetX = w * 0.5;
+				wellY = targetY = h * 0.65;
+			}
+		}
+
+		function project(u: number, v: number): [number, number] {
+			const t = Math.pow(v, perspPow);
+			const horizonY = h * horizonFrac;
+			const bottomY = h * 1.04;
+			const sy = horizonY + (bottomY - horizonY) * t;
+			const width = w * (farWidthFrac + (nearWidthFrac - farWidthFrac) * t);
+			const sx = w / 2 + (u - 0.5) * width;
+			return [sx, sy];
+		}
+
+		function bhEventHorizon() {
+			// Grows with intensity. ~50px at first onset, ~110px at full bloom.
+			return 50 + 60 * bhIntensity;
+		}
+
+		function bhWarp(x: number, y: number): [number, number] {
+			const dx = x - bhX, dy = y - bhY;
+			const d = Math.hypot(dx, dy);
+			const eventR = bhEventHorizon();
+			if (d < eventR) return [bhX, bhY];   // collapse to singularity
+			const reach = eventR * 8 + 240;
+			if (d > reach) return [x, y];
+			// 1/r²-ish falloff from horizon out to `reach`, scaled by intensity.
+			const t = 1 - (d - eventR) / (reach - eventR);
+			const pull = Math.min(0.96, t * t * bhIntensity);
+			return [x - dx * pull, y - dy * pull];
+		}
+
+		function warp(x: number, y: number, cx: number, cy: number, rad: number): [number, number] {
+			if (bhIntensity > 0) return bhWarp(x, y);
+			if (massMultiplier <= 0) return [x, y];
+			const dx = x - cx, dy = y - cy;
+			const d2 = dx * dx + dy * dy;
+			const r2 = rad * rad;
+			if (d2 >= r2) return [x, y];
+			const d = Math.sqrt(d2);
+			if (d < 0.0001) return [x, y];
+			const t = 1 - d / rad;
+			const pull = t * t * strength * massMultiplier;
+			return [x - dx * pull, y - dy * pull];
+		}
+
+		function drawFabric() {
+			ctx.lineWidth = 0.6;
+			const rad = R * radiusRel;
+
+			for (let r = 0; r <= rows; r++) {
+				const v = r / rows;
+				const a = Math.pow(v, 0.85);
+				ctx.strokeStyle = `rgba(232, 236, 230, ${0.13 * a})`;
+				ctx.beginPath();
+				for (let s = 0; s <= segs; s++) {
+					const u = s / segs;
+					const [sx, sy] = project(u, v);
+					const [x, y] = warp(sx, sy, wellX, wellY, rad);
+					if (s === 0) ctx.moveTo(x, y);
+					else ctx.lineTo(x, y);
+				}
+				ctx.stroke();
+			}
+
+			for (let c = 0; c <= cols; c++) {
+				const u = c / cols;
+				const [topX, topY] = project(u, 0);
+				const [botX, botY] = project(u, 1);
+				const grad = ctx.createLinearGradient(topX, topY, botX, botY);
+				grad.addColorStop(0, 'rgba(232, 236, 230, 0)');
+				grad.addColorStop(0.45, 'rgba(232, 236, 230, 0.05)');
+				grad.addColorStop(1, 'rgba(232, 236, 230, 0.14)');
+				ctx.strokeStyle = grad;
+				ctx.beginPath();
+				for (let s = 0; s <= segs; s++) {
+					const v = s / segs;
+					const [sx, sy] = project(u, v);
+					const [x, y] = warp(sx, sy, wellX, wellY, rad);
+					if (s === 0) ctx.moveTo(x, y);
+					else ctx.lineTo(x, y);
+				}
+				ctx.stroke();
+			}
+		}
+
+		function drawBlackHole() {
+			const eventR = bhEventHorizon();
+			const i = bhIntensity;
+
+			// Outer glow.
+			const glow = ctx.createRadialGradient(bhX, bhY, eventR, bhX, bhY, eventR * 6);
+			glow.addColorStop(0, `rgba(232, 236, 230, ${i * 0.18})`);
+			glow.addColorStop(0.35, `rgba(232, 236, 230, ${i * 0.06})`);
+			glow.addColorStop(1, 'rgba(232, 236, 230, 0)');
+			ctx.fillStyle = glow;
+			ctx.beginPath();
+			ctx.arc(bhX, bhY, eventR * 6, 0, Math.PI * 2);
+			ctx.fill();
+
+			// Event horizon — pure black, no transparency.
+			ctx.fillStyle = '#000';
+			ctx.beginPath();
+			ctx.arc(bhX, bhY, eventR, 0, Math.PI * 2);
+			ctx.fill();
+
+			// Photon ring.
+			ctx.strokeStyle = `rgba(232, 236, 230, ${Math.min(1, i * 1.1)})`;
+			ctx.lineWidth = 1.4;
+			ctx.beginPath();
+			ctx.arc(bhX, bhY, eventR * 1.05, 0, Math.PI * 2);
+			ctx.stroke();
+
+			// Faint secondary ring (lensing artifact).
+			ctx.strokeStyle = `rgba(232, 236, 230, ${i * 0.35})`;
+			ctx.lineWidth = 0.5;
+			ctx.beginPath();
+			ctx.arc(bhX, bhY, eventR * 1.22, 0, Math.PI * 2);
+			ctx.stroke();
+		}
+
+		// ── DOM element warping ───────────────────────────────────
+		function captureWarpTargets() {
+			const main = document.querySelector('main');
+			const sections = main
+				? Array.from(main.querySelectorAll<HTMLElement>(':scope > section, :scope > article'))
+					.filter((s) => !s.classList.contains('feed') && !s.classList.contains('projects'))
+				: [];
+			const entries = Array.from(document.querySelectorAll<HTMLElement>(
+				'.feed > .entry, .projects > .entry, .projects > .project-entry, .feed > article, .projects > article'
+			));
+			const others = [
+				document.querySelector<HTMLElement>('.site-header'),
+				document.querySelector<HTMLElement>('.site-footer'),
+				...Array.from(document.querySelectorAll<HTMLElement>('.filter')),
+			].filter((el): el is HTMLElement => !!el);
+
+			const all = [...others, ...sections, ...entries];
+			warpTargets = all.map((el) => {
+				const r = el.getBoundingClientRect();
+				return { el, cx: r.left + r.width / 2, cy: r.top + r.height / 2 };
+			});
+		}
+
+		function applyDomWarp() {
+			const i = bhIntensity;
+			// Rotation builds gradually so early frames stay readable.
+			const rot = Math.pow(i, 1.3) * 540;
+			const scale = Math.max(0, 1 - i * 0.98);
+			for (const t of warpTargets) {
+				const dx = bhX - t.cx;
+				const dy = bhY - t.cy;
+				const tx = i * dx;
+				const ty = i * dy;
+				t.el.style.transform = `translate3d(${tx}px, ${ty}px, 0) rotate(${rot}deg) scale(${scale})`;
+				t.el.style.transformOrigin = 'center';
+				t.el.style.willChange = 'transform';
+			}
+		}
+
+		function clearDomWarp() {
+			for (const t of warpTargets) {
+				t.el.style.transform = '';
+				t.el.style.willChange = '';
+			}
+			warpTargets = [];
+		}
+
+		// ── Shooting stars ────────────────────────────────────────
+		const stars: Star[] = [];
+		const STAR_MAX = 3;
+		const STAR_SPAWN_PROB = 0.0022;
+
+		function maybeSpawnStar() {
+			if (stars.length >= STAR_MAX) return;
+			if (Math.random() > STAR_SPAWN_PROB) return;
+			const fromLeft = Math.random() < 0.5;
+			const baseAngle = fromLeft ? Math.PI * 0.13 : Math.PI * 0.67;
+			const angle = baseAngle + Math.random() * Math.PI * 0.20;
+			const speed = 4 + Math.random() * 3;
+			const vx = Math.cos(angle) * speed;
+			const vy = Math.sin(angle) * speed;
+			const x = vx > 0
+				? -40 + Math.random() * (w * 0.6)
+				: w * 0.4 + Math.random() * (w * 0.6 + 40);
+			const y = -40 + Math.random() * (h * 0.25);
+			stars.push({
+				x, y, vx, vy,
+				life: 0,
+				maxLife: 80 + Math.random() * 60,
+				length: 60 + Math.random() * 80,
+			});
+		}
+
+		function drawStars() {
+			for (let i = stars.length - 1; i >= 0; i--) {
+				const s = stars[i];
+				s.life++;
+				s.x += s.vx;
+				s.y += s.vy;
+
+				const t = s.life / s.maxLife;
+				let alpha;
+				if (t < 0.25) alpha = t / 0.25;
+				else if (t > 0.70) alpha = (1 - t) / 0.30;
+				else alpha = 1;
+				alpha *= 0.55;
+
+				const norm = Math.hypot(s.vx, s.vy);
+				const tx = s.x - (s.vx / norm) * s.length;
+				const ty = s.y - (s.vy / norm) * s.length;
+
+				const g = ctx.createLinearGradient(s.x, s.y, tx, ty);
+				g.addColorStop(0, `rgba(232, 236, 230, ${alpha})`);
+				g.addColorStop(1, 'rgba(232, 236, 230, 0)');
+				ctx.strokeStyle = g;
+				ctx.lineWidth = 1;
+				ctx.lineCap = 'round';
+				ctx.beginPath();
+				ctx.moveTo(tx, ty);
+				ctx.lineTo(s.x, s.y);
+				ctx.stroke();
+
+				ctx.fillStyle = `rgba(232, 236, 230, ${Math.min(alpha * 1.4, 0.9)})`;
+				ctx.beginPath();
+				ctx.arc(s.x, s.y, 1, 0, Math.PI * 2);
+				ctx.fill();
+
+				if (
+					s.life >= s.maxLife ||
+					s.y > h + 80 ||
+					s.x < -80 ||
+					s.x > w + 80
+				) {
+					stars.splice(i, 1);
+				}
+			}
+		}
+
+		// ── Loop ──────────────────────────────────────────────────
+		let rafId = 0;
+
+		function frame() {
+			rafId = 0;
+
+			// BH ramp.
+			if (blackHoleMode) {
+				bhIntensity = Math.min(1, bhIntensity + 0.014);
+				// BH chases cursor with heavy lag — you can "carry" it.
+				bhX += (targetX - bhX) * 0.03;
+				bhY += (targetY - bhY) * 0.03;
+			} else if (bhIntensity > 0) {
+				bhIntensity = Math.max(0, bhIntensity - 0.022);
+			}
+
+			wellX += (targetX - wellX) * smoothing;
+			wellY += (targetY - wellY) * smoothing;
+
+			ctx.clearRect(0, 0, w, h);
+			drawFabric();
+
+			if (!reduce) {
+				maybeSpawnStar();
+				drawStars();
+			}
+
+			if (bhIntensity > 0) {
+				drawBlackHole();
+				if (warpTargets.length > 0) applyDomWarp();
+			} else if (warpTargets.length > 0) {
+				clearDomWarp();
+			}
+
+			if (!reduce) {
+				rafId = requestAnimationFrame(frame);
+			}
+		}
+
+		resize();
+
+		if (reduce) {
+			drawFabric();
+		} else {
+			rafId = requestAnimationFrame(frame);
+		}
+
+		const onResize = () => {
+			resize();
+			if (reduce) {
+				ctx.clearRect(0, 0, w, h);
+				drawFabric();
+			}
+		};
+		window.addEventListener('resize', onResize);
+		window.addEventListener('orientationchange', onResize);
+		if (window.visualViewport) {
+			window.visualViewport.addEventListener('resize', onResize);
+		}
+
+		if (reduce) return;
+
+		if (!isTouch) {
+			window.addEventListener('pointermove', (e) => {
+				targetX = e.clientX;
+				targetY = e.clientY;
+			}, { passive: true });
+		} else {
+			// Touch device: no cursor pull. Park the well off-screen so taps
+			// can't accidentally warp the grid.
+			massMultiplier = 0;
+			targetX = -9999;
+			targetY = -9999;
+		}
+
+		window.addEventListener('cursor-mass-change', ((e: CustomEvent<{
+			multiplier: number;
+			blackHole?: boolean;
+		}>) => {
+			const detail = e.detail || { multiplier: 0 };
+			massMultiplier = Math.max(0, Number(detail.multiplier) || 0);
+			if (detail.blackHole && !blackHoleMode) {
+				// Entering black-hole mode.
+				blackHoleMode = true;
+				bhX = w / 2;
+				bhY = h / 2;
+				captureWarpTargets();
+				document.body.classList.add('black-hole-active');
+			} else if (!detail.blackHole && blackHoleMode) {
+				// Exiting.
+				blackHoleMode = false;
+				document.body.classList.remove('black-hole-active');
+			}
+		}) as EventListener);
+	}
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', init, { once: true });
+	} else {
+		init();
+	}
+</script>
+
+<style is:global>
+	body.black-hole-active {
+		overflow: hidden;
+	}
+	body.black-hole-active .site-header,
+	body.black-hole-active .site-footer,
+	body.black-hole-active main {
+		pointer-events: none;
+	}
+	body.black-hole-active .mass-toggle {
+		pointer-events: auto;
+	}
+</style>
+
+<style>
+	.spacetime-fabric {
+		position: fixed;
+		inset: 0;
+		pointer-events: none;
+		z-index: 0;
+		display: block;
+	}
+</style>

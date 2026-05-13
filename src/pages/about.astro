@@ -17,15 +17,15 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 				<h1>About</h1>
 			<p>My best work happens deep inside a problem, and it isn't done until I've brought what I found back to the team. I started out in product, got curious about how the tech actually worked, and learned to build it. The product brain never went anywhere, which means when I sit with a customer or a stakeholder I tend to hear them out and reach for the simplest technical move that solves the problem instead of the obvious bigger one.</p>
 
-<p>I'm self-taught. I spent the early part of my career around technology in product roles, then crossed the line and started writing code at a small startup. I grew from junior to senior there, which is the kind of environment that forces you into every part of the stack and does not let you specialize your way out of anything. I also led the AI development effort at that company.</p>
+<p>I'm a self-taught generalist. I spent the early part of my career around technology in product roles, then crossed the line and started writing code at a small startup. I grew from junior to senior there, which is the kind of environment that forces you into every part of the stack and does not let you specialize your way out of anything. I also eneded up leading AI product development at that company.</p>
 
-<p>What I'm best at is translating customer pain into the simplest technical thing that solves it. Early on at that startup we coupled ourselves tightly to Stripe for payments, and it became clear that some customers were going to need providers Stripe could not cover. Leadership was uneasy about widening the surface. I built a small adapter-pattern library that made it safe and boring to add new providers, and I had to demo it before the team believed how simple it actually was. That's the kind of work I want more of: spotting the pivot before it becomes a fire drill, and making the response to it boring.</p>
+<p>What I'm best at is translating customer pain into the simplest technical thing that solves it. That's the kind of work I want more of: spotting the pivot before it becomes a fire drill, and making the response to it boring.</p>
 
 <p>I think good software has a small footprint. It is extensible by nature, clear in its intent, declarative where it can be, and it works both in isolation and as part of a larger system. With agents in the loop, I believe small teams can ship faster than ever, but only if the engineers in the room have the principles to steer the agents instead of being steered by them. That steering is its own craft, and I think it's the part of the job that will distinguish good engineers over the next few years.</p>
 
 <p>That's where I'm going next. I'm doubling down on agentic engineering by tripling down on fundamentals. Writing code matters less than it did a year ago. Understanding code, knowing the patterns and tradeoffs behind it, and steering it confidently matters more than ever. The version of myself I'm trying to grow into is the engineer who can hold the whole picture, direct the work, and ship good code faster than anyone else on the team.</p>
 
-<p>Outside of work I'm raising three boys in Richmond, Virginia. Watching them learn to navigate the world and encouraging their curiosity is what's actually driving me right now. I'm learning from them everyday how to show up to be a better engineer and coworker.</p>
+<p>Outside of work I'm raising three boys in Richmond, Virginia. Watching them learn to navigate the world and encouraging their curiosity is what's actually driving me right now. I'm learning from them how to show up to be a better engineer and coworker.</p>
 			</article>
 		</main>
 		<Footer />
@@ -33,22 +33,47 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 </html>
 
 <style>
+	.about-wrap {
+		position: relative;
+	}
+
 	.about {
-		max-width: var(--max-width);
+		position: relative;
+		max-width: var(--max-prose);
 		margin: 0 auto;
-		padding: var(--space-4xl) var(--space-lg) var(--space-3xl);
+		padding: var(--space-9) var(--space-6) var(--space-8);
+	}
+
+	.about .eyebrow {
+		font-family: var(--font-mono);
+		font-size: var(--text-mono);
+		color: var(--ink-3);
+		letter-spacing: 0.16em;
+		margin-bottom: var(--space-6);
+		text-transform: lowercase;
 	}
 
 	.about h1 {
 		font-family: var(--font-display);
-		font-size: 2.5rem;
-		margin: 0 0 var(--space-2xl);
+		font-weight: 300;
+		font-size: var(--text-display-lg);
+		line-height: 1.05;
+		letter-spacing: -0.03em;
+		margin: 0 0 var(--space-7);
+		max-width: 18ch;
+	}
+
+	.about h1 .em {
+		font-style: italic;
+		font-weight: 300;
+		color: var(--accent);
 	}
 
 	.about p {
-		color: var(--text-secondary);
+		font-family: var(--font-body);
+		color: var(--ink-2);
 		font-size: 1.05rem;
-		line-height: 1.8;
+		line-height: 1.75;
 		margin-bottom: 1.5em;
 	}
 
@@ -58,11 +83,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 
 	@media (max-width: 640px) {
 		.about {
-			padding: var(--space-2xl) var(--space-md) var(--space-2xl);
-		}
-
-		.about h1 {
-			font-size: 2rem;
+			padding: var(--space-7) var(--space-5) var(--space-7);
 		}
 	}
 </style>

@@ -1,0 +1,252 @@
+---
+/**
+ * <MassToggle /> — fixed-corner control for the spacetime fabric's cursor pull.
+ *
+ * Four normal levels (off / low / med / high) plus a hidden fifth: super,
+ * which opens a black hole. The super pill stays display:none until the user
+ * types "singularity" anywhere on the page. Once unlocked, it persists across
+ * visits via localStorage.
+ *
+ * Selection broadcasts a `cursor-mass-change` CustomEvent. For super, the
+ * event payload includes `blackHole: true`. Esc exits super back to the
+ * previously-active level.
+ *
+ * Hidden for `prefers-reduced-motion` users since the fabric is static.
+ */
+
+const levels = [
+	{ key: 'off', label: 'off', mult: 0, blackHole: false },
+	{ key: 'low', label: 'low', mult: 0.4, blackHole: false },
+	{ key: 'med', label: 'med', mult: 1.0, blackHole: false },
+	{ key: 'high', label: 'high', mult: 2.4, blackHole: false },
+	{ key: 'super', label: 'super', mult: 1.0, blackHole: true },
+];
+---
+
+<div class="mass-toggle" aria-label="Cursor mass">
+	<span class="label">cursor mass</span>
+	<span class="sep" aria-hidden="true">·</span>
+	{levels.map((l, i) => (
+		<>
+			<button
+				class:list={['mass-btn', l.key === 'super' && 'mass-btn--super']}
+				type="button"
+				data-key={l.key}
+				data-mult={l.mult}
+				data-blackhole={l.blackHole ? 'true' : 'false'}
+				aria-pressed="false"
+			>{l.label}</button>
+			{i < levels.length - 1 && <span class:list={['sep', l.key === 'high' && 'sep--super']} aria-hidden="true">·</span>}
+		</>
+	))}
+</div>
+
+<script>
+	const STORAGE_KEY = 'cursor-mass';
+	const UNLOCK_KEY = 'super-unlocked';
+	const SECRET = 'singularity';
+	const DEFAULT_KEY = 'low';
+
+	let currentKey = DEFAULT_KEY;
+	let previousKey: string | null = null;
+
+	function dispatch(key: string, mult: number, blackHole: boolean) {
+		window.dispatchEvent(
+			new CustomEvent('cursor-mass-change', {
+				detail: { multiplier: mult, blackHole },
+			})
+		);
+		document.querySelectorAll<HTMLButtonElement>('.mass-toggle .mass-btn').forEach((b) => {
+			const active = b.dataset.key === key;
+			b.classList.toggle('active', active);
+			b.setAttribute('aria-pressed', String(active));
+		});
+		currentKey = key;
+	}
+
+	function apply(key: string, mult: number, blackHole: boolean, persist: boolean) {
+		// Remember what we were on before super, so Esc can return us there.
+		if (blackHole && currentKey !== 'super') {
+			previousKey = currentKey;
+		}
+		if (persist && !blackHole) {
+			try { localStorage.setItem(STORAGE_KEY, key); } catch {}
+		}
+		dispatch(key, mult, blackHole);
+	}
+
+	function exitSuper() {
+		const back = previousKey || DEFAULT_KEY;
+		const btn = document.querySelector<HTMLButtonElement>(
+			`.mass-toggle .mass-btn[data-key="${back}"]`
+		);
+		if (btn) {
+			apply(back, Number(btn.dataset.mult), false, true);
+		} else {
+			apply(DEFAULT_KEY, 0.4, false, true);
+		}
+		previousKey = null;
+	}
+
+	function revealSuper() {
+		const btn = document.querySelector<HTMLButtonElement>('.mass-btn--super');
+		const sep = document.querySelector<HTMLElement>('.sep--super');
+		if (!btn || btn.classList.contains('revealed')) return;
+		btn.classList.add('revealed');
+		if (sep) sep.classList.add('revealed');
+		try { localStorage.setItem(UNLOCK_KEY, '1'); } catch {}
+	}
+
+	function setupSecret() {
+		let typed = '';
+		window.addEventListener('keydown', (e) => {
+			const tgt = e.target as HTMLElement | null;
+			const tag = tgt?.tagName || '';
+			if (tag === 'INPUT' || tag === 'TEXTAREA' || tgt?.isContentEditable) return;
+			if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+			if (e.key === 'Escape' && currentKey === 'super') {
+				e.preventDefault();
+				exitSuper();
+				return;
+			}
+
+			if (e.key.length !== 1) return;
+			typed = (typed + e.key.toLowerCase()).slice(-SECRET.length);
+			if (typed === SECRET) {
+				revealSuper();
+				typed = '';
+			}
+		});
+	}
+
+	function init() {
+		let saved = DEFAULT_KEY;
+		try { saved = localStorage.getItem(STORAGE_KEY) || DEFAULT_KEY; } catch {}
+
+		let unlocked = false;
+		try { unlocked = localStorage.getItem(UNLOCK_KEY) === '1'; } catch {}
+		if (unlocked) revealSuper();
+
+		document.querySelectorAll<HTMLButtonElement>('.mass-toggle .mass-btn').forEach((btn) => {
+			btn.addEventListener('click', () => {
+				const key = btn.dataset.key!;
+				const mult = Number(btn.dataset.mult);
+				const bh = btn.dataset.blackhole === 'true';
+				apply(key, mult, bh, true);
+			});
+		});
+
+		// Never auto-restore super from storage — start in the saved normal level.
+		const initialKey = saved === 'super' ? DEFAULT_KEY : saved;
+		const initial = document.querySelector<HTMLButtonElement>(
+			`.mass-toggle .mass-btn[data-key="${initialKey}"]`
+		);
+		if (initial) {
+			apply(initialKey, Number(initial.dataset.mult), false, false);
+		}
+
+		setupSecret();
+	}
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', init, { once: true });
+	} else {
+		init();
+	}
+</script>
+
+<style>
+	.mass-toggle {
+		position: fixed;
+		bottom: var(--space-5);
+		right: var(--space-5);
+		z-index: 5;
+		display: flex;
+		align-items: baseline;
+		gap: var(--space-2);
+		font-family: var(--font-mono);
+		font-size: var(--text-mono);
+		color: var(--ink-3);
+		letter-spacing: 0.04em;
+		user-select: none;
+	}
+
+	.label {
+		color: var(--ink-3);
+	}
+
+	.sep {
+		color: var(--ink-3);
+		opacity: 0.45;
+	}
+
+	.mass-btn {
+		background: transparent;
+		border: 0;
+		padding: 0;
+		margin: 0;
+		font: inherit;
+		color: var(--ink-3);
+		cursor: pointer;
+		letter-spacing: inherit;
+		transition: color var(--duration) var(--ease-out);
+	}
+
+	.mass-btn:hover {
+		color: var(--ink-2);
+	}
+
+	.mass-btn.active {
+		color: var(--ink);
+	}
+
+	.mass-btn:focus-visible {
+		outline: 1px solid var(--accent);
+		outline-offset: 3px;
+	}
+
+	/* Super — hidden until "singularity" is typed. */
+	.mass-btn--super {
+		display: none;
+	}
+	.sep--super {
+		display: none;
+	}
+	.mass-btn--super.revealed,
+	.sep--super.revealed {
+		display: inline;
+	}
+	.mass-btn--super.revealed {
+		animation: superReveal 0.7s var(--ease-out) both;
+	}
+	.mass-btn--super.active {
+		color: var(--accent);
+	}
+
+	@keyframes superReveal {
+		from {
+			opacity: 0;
+			color: var(--accent);
+			letter-spacing: 0.2em;
+		}
+		to {
+			opacity: 1;
+			color: var(--ink-3);
+			letter-spacing: 0.04em;
+		}
+	}
+
+	/* No cursor on touch / mobile — hide entirely. */
+	@media (max-width: 640px), (pointer: coarse) and (hover: none) {
+		.mass-toggle {
+			display: none;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.mass-toggle {
+			display: none;
+		}
+	}
+</style>

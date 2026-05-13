@@ -9,23 +9,25 @@ interface Props {
 const { projects, emptyMessage = 'No projects yet — check back soon.' } = Astro.props;
 ---
 
-<section class="projects">
+<section class="feed projects">
 	{projects.length === 0 ? (
-		<p class="empty-state">{emptyMessage}</p>
+		<p class="empty-state"><span class="em">{emptyMessage}</span></p>
 	) : (
 		projects.map((project) => (
-			<article class="project-entry">
-				<div class="project-meta">
-					<span class="category" data-category={project.data.category}>{project.data.category}</span>
-					{project.data.timeline && <span class="dot">·</span>}
-					{project.data.timeline && <span>{project.data.timeline}</span>}
-					{project.data.status && <span class="dot">·</span>}
-					{project.data.status && <span class="status">{project.data.status}</span>}
+			<article class="entry project-entry">
+				<div class="date">
+					<span class="category">{project.data.category}</span>
+					{project.data.timeline && <><br />{project.data.timeline}</>}
 				</div>
-				<h2 class="project-title">
-					<a href={`/work/projects/${project.id}/`}>{project.data.title}</a>
-				</h2>
-				<p class="project-summary">{project.data.summary}</p>
+				<div>
+					<h3>
+						<a href={`/work/projects/${project.id}/`}>{project.data.title}</a>
+					</h3>
+					<p class="hook">{project.data.summary}</p>
+					{project.data.status && (
+						<p class="status-line">{project.data.status}</p>
+					)}
+				</div>
 			</article>
 		))
 	)}
@@ -33,85 +35,32 @@ const { projects, emptyMessage = 'No projects yet — check back soon.' } = Astr
 
 <style>
 	.projects {
-		max-width: var(--max-width);
-		margin: 0 auto;
-		padding: 0 var(--space-lg) var(--space-4xl);
+		padding-bottom: var(--space-9);
 	}
 
-	.project-entry {
-		padding: var(--space-xl) 0;
-		border-bottom: 1px solid var(--border);
-	}
-
-	.project-entry:first-child {
-		border-top: 1px solid var(--border);
-	}
-
-	.project-meta {
-		display: flex;
-		align-items: center;
-		flex-wrap: wrap;
-		gap: var(--space-xs);
-		margin-bottom: var(--space-xs);
-		font-family: var(--font-mono);
-		font-size: 0.78rem;
-		color: var(--text-tertiary);
-		text-transform: uppercase;
-		letter-spacing: 0.06em;
+	.project-entry .date {
+		line-height: 1.6;
 	}
 
 	.category {
-		color: var(--text-secondary);
+		display: inline-block;
+		color: var(--ink-2);
+		text-transform: lowercase;
 	}
 
-	.category[data-category='professional'] {
-		color: var(--accent);
-	}
-
-	.dot {
-		opacity: 0.5;
-	}
-
-	.status {
-		color: var(--accent);
-	}
-
-	.project-title {
-		font-family: var(--font-display);
-		font-size: 1.5rem;
-		font-weight: 400;
-		line-height: 1.25;
-		margin: var(--space-xs) 0;
-		letter-spacing: -0.01em;
-	}
-
-	.project-title a {
-		color: var(--text);
-		text-decoration: none;
-		transition: color var(--duration) var(--ease-out);
-	}
-
-	.project-title a:hover {
-		color: var(--accent);
-	}
-
-	.project-summary {
-		color: var(--text-secondary);
-		font-size: 0.95rem;
-		line-height: 1.6;
-		margin: var(--space-xs) 0 0;
+	.status-line {
+		font-family: var(--font-mono);
+		font-size: var(--text-mono);
+		letter-spacing: 0.04em;
+		color: var(--ink-3);
+		margin: var(--space-3) 0 0;
+		text-transform: lowercase;
 	}
 
 	.empty-state {
 		text-align: center;
-		color: var(--text-tertiary);
-		padding: var(--space-2xl) var(--space-lg);
-		font-style: italic;
-	}
-
-	@media (max-width: 640px) {
-		.project-title {
-			font-size: 1.3rem;
-		}
+		color: var(--ink-3);
+		padding: var(--space-8) var(--space-6);
+		font-family: var(--font-body);
 	}
 </style>
