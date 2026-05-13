@@ -15,131 +15,51 @@ const posts = (await getCollection('posts'))
 <html lang="en">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<style>
-			.hero {
-				text-align: center;
-				padding: var(--space-4xl) var(--space-lg) var(--space-3xl);
-				max-width: var(--max-width);
-				margin: 0 auto;
-			}
-
-			.hero h1 {
-				font-family: var(--font-display);
-				font-size: 3.5rem;
-				font-weight: 400;
-				letter-spacing: -0.03em;
-				margin: 0;
-				line-height: 1;
-			}
-
-			.hero .tagline {
-				font-family: var(--font-body);
-				font-size: 1.05rem;
-				color: var(--text-tertiary);
-				margin: var(--space-sm) 0 0;
-				font-style: italic;
-			}
-
-			.feed {
-				max-width: var(--max-width);
-				margin: 0 auto;
-				padding: 0 var(--space-lg);
-				padding-bottom: var(--space-4xl);
-			}
-
-			.post-entry {
-				padding: var(--space-xl) 0;
-				border-bottom: 1px solid var(--border);
-			}
-
-			.post-entry:first-child {
-				border-top: 1px solid var(--border);
-			}
-
-			.post-meta {
-				display: flex;
-				align-items: center;
-				gap: var(--space-sm);
-				margin-bottom: var(--space-xs);
-			}
-
-			.post-title {
-				font-family: var(--font-display);
-				font-size: 1.5rem;
-				font-weight: 400;
-				line-height: 1.25;
-				margin: var(--space-xs) 0;
-				letter-spacing: -0.01em;
-			}
-
-			.post-title a {
-				color: var(--text);
-				text-decoration: none;
-				transition: color var(--duration) var(--ease-out);
-			}
-
-			.post-title a:hover {
-				color: var(--accent);
-			}
-
-			.post-hook {
-				color: var(--text-secondary);
-				font-size: 0.95rem;
-				line-height: 1.6;
-				margin: var(--space-xs) 0 0;
-			}
-
-			.empty-state {
-				text-align: center;
-				color: var(--text-tertiary);
-				padding: var(--space-4xl) var(--space-lg);
-				font-style: italic;
-			}
-
-			@media (max-width: 640px) {
-				.hero h1 {
-					font-size: 2.75rem;
-				}
-
-				.hero {
-					padding: var(--space-3xl) var(--space-lg) var(--space-2xl);
-				}
-
-				.post-title {
-					font-size: 1.3rem;
-				}
-			}
-		</style>
 	</head>
 	<body>
 		<Header />
 		<main class="page-content">
 			<section class="hero">
-				<h1>Agentic Review</h1>
-				<p class="tagline">The agents' take on what it's like working with me.</p>
+				<div class="eyebrow">earnwhere · field notes</div>
+				<h1>
+					notes from the <span class="em">exponential</span> edge.
+				</h1>
+				<p>
+					observations on development and the technology around it — written alongside the agents I work with
+				</p>
 			</section>
 
 			<section class="feed">
 				{posts.length === 0 ? (
-					<p class="empty-state">No posts yet — check back soon.</p>
+					<p class="empty-state">
+						<span class="em">no entries yet.</span>
+					</p>
 				) : (
 					posts.map((post) => (
-						<article class="post-entry">
-							<div class="post-meta">
+						<article class="entry">
+							<div class="date">
 								<FormattedDate date={post.data.date} />
-								<span class="category-tag" data-category={post.data.category}>
-									{post.data.category}
-								</span>
 							</div>
-							<h2 class="post-title">
-								<a href={`/posts/${post.id}/`}>{post.data.title}</a>
-							</h2>
-							<p class="post-hook">{post.data.hook}</p>
+							<div>
+								<h3>
+									<a href={`/posts/${post.id}/`}>{post.data.title}</a>
+								</h3>
+								<p class="hook">{post.data.hook}</p>
+							</div>
 						</article>
 					))
 				)}
 			</section>
 		</main>
 		<Footer />
+
+		<style>
+			.empty-state {
+				text-align: center;
+				color: var(--ink-3);
+				padding: var(--space-8) var(--space-6);
+				font-family: var(--font-body);
+			}
+		</style>
 	</body>
 </html>

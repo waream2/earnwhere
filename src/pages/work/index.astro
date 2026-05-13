@@ -16,48 +16,14 @@ const projects = (await getCollection('projects'))
 <html lang="en">
 	<head>
 		<BaseHead title={`Work — ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
-		<style>
-			.work-header {
-				text-align: center;
-				padding: var(--space-4xl) var(--space-lg) var(--space-lg);
-				max-width: var(--max-width);
-				margin: 0 auto;
-			}
-
-			.work-header h1 {
-				font-family: var(--font-display);
-				font-size: 3rem;
-				font-weight: 400;
-				letter-spacing: -0.03em;
-				margin: 0;
-				line-height: 1;
-			}
-
-			.work-header .tagline {
-				font-family: var(--font-body);
-				font-size: 1.05rem;
-				color: var(--text-tertiary);
-				margin: var(--space-sm) 0 0;
-				font-style: italic;
-			}
-
-			@media (max-width: 640px) {
-				.work-header h1 {
-					font-size: 2.5rem;
-				}
-
-				.work-header {
-					padding: var(--space-3xl) var(--space-lg) var(--space-md);
-				}
-			}
-		</style>
 	</head>
 	<body>
 		<Header />
 		<main class="page-content">
 			<section class="work-header">
-				<h1>work</h1>
-				<p class="tagline">Things I've built — problem, constraints, tradeoffs, and what I learned.</p>
+				<div class="eyebrow">work · field log</div>
+				<h1>things i've <span class="em">built</span>.</h1>
+				<p>problem, constraints, tradeoffs, and what i learned.</p>
 			</section>
 
 			<WorkFilter active="all" />
@@ -66,3 +32,51 @@ const projects = (await getCollection('projects'))
 		<Footer />
 	</body>
 </html>
+
+<style>
+	.work-header {
+		padding: var(--space-9) var(--space-6) var(--space-7);
+		max-width: var(--max-content);
+		margin: 0 auto;
+	}
+
+	.work-header .eyebrow {
+		font-family: var(--font-mono);
+		font-size: var(--text-mono);
+		color: var(--ink-3);
+		letter-spacing: 0.16em;
+		margin-bottom: var(--space-6);
+	}
+
+	.work-header h1 {
+		font-family: var(--font-display);
+		font-weight: 300;
+		font-size: var(--text-display-xl);
+		line-height: 0.98;
+		letter-spacing: -0.035em;
+		margin: 0 0 var(--space-5);
+		max-width: 14ch;
+	}
+
+	.work-header h1 .em {
+		font-style: italic;
+		font-weight: 300;
+		color: var(--accent);
+	}
+
+	.work-header p {
+		font-family: var(--font-body);
+		font-style: italic;
+		font-size: 1.125rem;
+		color: var(--ink-2);
+		margin: 0;
+		max-width: 480px;
+		line-height: 1.6;
+	}
+
+	@media (max-width: 640px) {
+		.work-header {
+			padding: var(--space-7) var(--space-5) var(--space-6);
+		}
+	}
+</style>

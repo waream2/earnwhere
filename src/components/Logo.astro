@@ -1,0 +1,71 @@
+---
+/**
+ * <Logo /> — the exponential e mark.
+ *
+ * Lowercase e whose tail extends as an e^x-style curve. The curve carries the
+ * accent color; the e body inherits currentColor.
+ *
+ * Props:
+ *   size    — px (default 36)
+ *   accent  — override accent color (default uses --accent)
+ *   title   — accessible label (default "earnwhere")
+ *
+ * Clearspace: at least 1/2 the size on every side. Min size 24px.
+ */
+interface Props {
+	size?: number;
+	accent?: string;
+	title?: string;
+}
+
+const { size = 36, accent, title = "earnwhere" } = Astro.props;
+---
+
+<svg
+	width={size}
+	height={size}
+	viewBox="0 0 64 64"
+	fill="none"
+	role="img"
+	aria-label={title}
+	class="logo"
+	style={accent ? `--logo-accent: ${accent};` : undefined}
+>
+	{/* bowl of the e */}
+	<path
+		d="M 32 32 A 10 10 0 1 1 22 42"
+		stroke="currentColor"
+		stroke-width="2"
+		stroke-linecap="round"
+		fill="none"
+	/>
+	{/* crossbar */}
+	<path
+		d="M 13 32 L 32 32"
+		stroke="currentColor"
+		stroke-width="2"
+		stroke-linecap="round"
+	/>
+	{/* exponential tail */}
+	<path
+		d="M 22 42 Q 36 42 44 36 T 58 14"
+		stroke="var(--logo-accent, var(--accent))"
+		stroke-width="2"
+		stroke-linecap="round"
+		fill="none"
+	/>
+	{/* terminal */}
+	<circle
+		cx="58"
+		cy="14"
+		r="2.4"
+		fill="var(--logo-accent, var(--accent))"
+	/>
+</svg>
+
+<style>
+	.logo {
+		display: block;
+		flex-shrink: 0;
+	}
+</style>
