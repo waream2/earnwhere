@@ -11,6 +11,7 @@ interface ProjectLink {
 interface Props {
 	title: string;
 	summary: string;
+	tldr?: string;
 	date: Date;
 	category: 'professional' | 'personal' | 'craft';
 	role?: string;
@@ -20,7 +21,7 @@ interface Props {
 	links?: ProjectLink[];
 }
 
-const { title, summary, category, role, stack, timeline, status, links } = Astro.props;
+const { title, summary, tldr, category, role, stack, timeline, status, links } = Astro.props;
 ---
 
 <html lang="en">
@@ -62,6 +63,12 @@ const { title, summary, category, role, stack, timeline, status, links } = Astro
 						</div>
 					)}
 				</div>
+				{tldr && (
+					<aside class="tldr">
+						<span class="tldr-label">TL;DR</span>
+						<p>{tldr}</p>
+					</aside>
+				)}
 				<div class="prose">
 					<slot />
 				</div>
@@ -178,6 +185,29 @@ const { title, summary, category, role, stack, timeline, status, links } = Astro
 	.project-links a:hover {
 		color: var(--accent);
 		border-bottom-color: var(--accent);
+	}
+
+	.tldr {
+		margin: 0 0 var(--space-7);
+		padding-top: var(--space-5);
+		border-top: 1px solid var(--line-strong);
+	}
+
+	.tldr-label {
+		display: block;
+		font-family: var(--font-mono);
+		font-size: var(--text-mono);
+		letter-spacing: 0.04em;
+		color: var(--ink-3);
+		margin-bottom: var(--space-3);
+	}
+
+	.tldr p {
+		margin: 0;
+		font-family: var(--font-body);
+		font-size: 1.0625rem;
+		line-height: 1.65;
+		color: var(--ink);
 	}
 
 	.prose {

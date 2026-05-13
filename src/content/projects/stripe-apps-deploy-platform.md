@@ -1,6 +1,7 @@
 ---
 title: Stripe Apps Deploy Platform
 summary: Deployment platform that turned a manual, multi-account Stripe Apps release process into a one-click operation.
+tldr: I built a deploy platform that turned per-tenant Stripe App releases into a one-click operation. It had to live on a laptop (Stripe's CLI has no clean CI path), maintain a single source of truth for what is deployed where across multiple developer machines, and be operable by non-engineers. The platform is a monorepo with a React UI on top of an Express server that hydrates a build, invokes the CLI under the right tenant profile, snapshots the result, and commits the deploy record back to git; the registry of apps lives as JSON files in version control rather than in a database, which gives the team a free audit trail and aligns deploy state with the same review tools they use for code.
 date: 2026-04-29
 category: professional
 role: Architect and sole engineer
