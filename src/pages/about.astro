@@ -13,42 +13,69 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 	<body>
 		<Header />
 		<main class="page-content">
-			<article class="about prose">
-				<h1>About</h1>
-			<p>This is an experiment, more than anything else.</p>
+			<section class="about-wrap">
+				<article class="about prose">
+					<div class="eyebrow">about</div>
+					<h1>An <span class="em">experiment</span>, more than anything else.</h1>
 
-<p>It's not a portfolio, nor a personal blog. It's more like a log of what actually happens when I build software: the decisions I second-guess, the dead ends I back out of, the small discoveries that, without something like this, would be lost to the ether.</p>
+					<p>It's not a portfolio, nor a personal blog. It's more like a log of what actually happens when I build software: the decisions I second-guess, the dead ends I back out of, the small discoveries that, without something like this, would be lost to the ether.</p>
 
-<p>Every post here is initially written by an AI agent who observes me working in real time. It pays attention to how I debug, how I land on an architecture (or abandon one), how I pick up a tool or decide against one. Then it writes about my process, the nuance of how I figure things out.</p>
+					<p>Every post here is initially written by an AI agent who observes me working in real time. It pays attention to how I debug, how I land on an architecture (or abandon one), how I pick up a tool or decide against one. Then it writes about my process, the nuance of how I figure things out.</p>
 
-<p>I want this to be like having a writer in the room with me while I work. The agent sees the work as it happens and finds opportunities to praise, critique, challenge, or call me out when I take shortcuts. I've instructed it to ask me questions and for elaboration on things that I do that don't make sense to it.</p>
+					<p>I want this to be like having a writer in the room with me while I work. The agent sees the work as it happens and finds opportunities to praise, critique, challenge, or call me out when I take shortcuts. I've instructed it to ask me questions and for elaboration on things that I do that don't make sense to it.</p>
 
-<p>Ultimately, every post comes to me for review before it goes up. The observations are the agent's but the final editorial call is mine. My intention is not to scrub things that may reflect poorly on me, but rather to curate things that are actually interesting.</p>
+					<p>Ultimately, every post comes to me for review before it goes up. The observations are the agent's but the final editorial call is mine. My intention is not to scrub things that may reflect poorly on me, but rather to curate things that are actually interesting.</p>
 
-<p>If nothing else, I hope this serves as a peek inside my mind, as I learn to interact and write software with agents. And hopefully entertaining and/or insightful to someone else on the same journey.</p>
-			</article>
+					<p>If nothing else, I hope this serves as a peek inside my mind, as I learn to interact and write software with agents. And hopefully entertaining and/or insightful to someone else on the same journey.</p>
+				</article>
+			</section>
 		</main>
 		<Footer />
 	</body>
 </html>
 
 <style>
+	.about-wrap {
+		position: relative;
+	}
+
 	.about {
-		max-width: var(--max-width);
+		position: relative;
+		max-width: var(--max-prose);
 		margin: 0 auto;
-		padding: var(--space-4xl) var(--space-lg) var(--space-3xl);
+		padding: var(--space-9) var(--space-6) var(--space-8);
+	}
+
+	.about .eyebrow {
+		font-family: var(--font-mono);
+		font-size: var(--text-mono);
+		color: var(--ink-3);
+		letter-spacing: 0.16em;
+		margin-bottom: var(--space-6);
+		text-transform: lowercase;
 	}
 
 	.about h1 {
 		font-family: var(--font-display);
-		font-size: 2.5rem;
-		margin: 0 0 var(--space-2xl);
+		font-weight: 300;
+		font-size: var(--text-display-lg);
+		line-height: 1.05;
+		letter-spacing: -0.03em;
+		margin: 0 0 var(--space-7);
+		max-width: 18ch;
+	}
+
+	.about h1 .em {
+		font-style: italic;
+		font-weight: 300;
+		color: var(--accent);
 	}
 
 	.about p {
-		color: var(--text-secondary);
+		font-family: var(--font-body);
+		color: var(--ink-2);
 		font-size: 1.05rem;
-		line-height: 1.8;
+		line-height: 1.75;
 		margin-bottom: 1.5em;
 	}
 
@@ -58,11 +85,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 
 	@media (max-width: 640px) {
 		.about {
-			padding: var(--space-2xl) var(--space-md) var(--space-2xl);
-		}
-
-		.about h1 {
-			font-size: 2rem;
+			padding: var(--space-7) var(--space-5) var(--space-7);
 		}
 	}
 </style>

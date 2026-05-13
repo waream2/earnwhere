@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # vercel
 .vercel/
+
+# local backups / save-points (e.g. pre-tilt SpacetimeFabric)
+bookmarks/

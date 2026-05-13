@@ -26,144 +26,6 @@ const { title, summary, category, role, stack, timeline, status, links } = Astro
 <html lang="en">
 	<head>
 		<BaseHead title={title} description={summary} />
-		<style>
-			article {
-				max-width: var(--max-width);
-				margin: 0 auto;
-				padding: var(--space-4xl) var(--space-lg) var(--space-3xl);
-			}
-
-			.project-header {
-				text-align: center;
-				margin-bottom: var(--space-3xl);
-			}
-
-			.project-header h1 {
-				font-family: var(--font-display);
-				font-size: 2.75rem;
-				font-weight: 400;
-				line-height: 1.15;
-				letter-spacing: -0.02em;
-				margin: 0 0 var(--space-lg);
-				color: var(--text);
-			}
-
-			.summary {
-				font-size: 1.15rem;
-				line-height: 1.7;
-				color: var(--text-secondary);
-				margin: 0 auto var(--space-2xl);
-				max-width: 560px;
-			}
-
-			.project-facts {
-				display: flex;
-				flex-wrap: wrap;
-				justify-content: center;
-				gap: var(--space-md) var(--space-xl);
-				font-family: var(--font-mono);
-				font-size: 0.78rem;
-				color: var(--text-tertiary);
-				text-transform: uppercase;
-				letter-spacing: 0.06em;
-				margin: 0 auto var(--space-lg);
-				max-width: 640px;
-			}
-
-			.fact .label {
-				color: var(--text-tertiary);
-				margin-right: var(--space-xs);
-				opacity: 0.7;
-			}
-
-			.fact .value {
-				color: var(--text-secondary);
-				text-transform: none;
-				letter-spacing: 0;
-			}
-
-			.fact .category-link {
-				color: var(--accent);
-				text-decoration: none;
-				border-bottom: 1px solid transparent;
-				transition: border-color var(--duration) var(--ease-out);
-			}
-
-			.fact .category-link:hover {
-				border-bottom-color: var(--accent);
-			}
-
-			.fact .value.status {
-				color: var(--accent);
-				text-transform: uppercase;
-				letter-spacing: 0.06em;
-			}
-
-			.project-links {
-				display: flex;
-				flex-wrap: wrap;
-				justify-content: center;
-				gap: var(--space-md);
-				margin-top: var(--space-md);
-			}
-
-			.project-links a {
-				font-family: var(--font-mono);
-				font-size: 0.8rem;
-				color: var(--accent);
-				text-decoration: none;
-				border-bottom: 1px solid var(--border);
-				padding-bottom: 2px;
-				transition: border-color var(--duration) var(--ease-out);
-			}
-
-			.project-links a:hover {
-				border-bottom-color: var(--accent);
-			}
-
-			.project-divider {
-				border: none;
-				border-top: 1px solid var(--border);
-				margin: 0 0 var(--space-3xl);
-			}
-
-			.back-link {
-				display: inline-flex;
-				align-items: center;
-				gap: var(--space-sm);
-				font-family: var(--font-mono);
-				font-size: 0.8rem;
-				color: var(--text-tertiary);
-				margin-top: var(--space-4xl);
-				transition: color var(--duration) var(--ease-out);
-			}
-
-			.back-link:hover {
-				color: var(--accent);
-			}
-
-			.back-link span {
-				transition: transform var(--duration) var(--ease-out);
-			}
-
-			.back-link:hover span {
-				transform: translateX(-3px);
-			}
-
-			@media (max-width: 640px) {
-				article {
-					padding: var(--space-2xl) var(--space-md) var(--space-2xl);
-				}
-
-				.project-header h1 {
-					font-size: 2rem;
-				}
-
-				.summary {
-					font-size: 1.05rem;
-				}
-			}
-		</style>
 	</head>
 
 	<body>
@@ -171,23 +33,27 @@ const { title, summary, category, role, stack, timeline, status, links } = Astro
 		<main class="page-content">
 			<article>
 				<div class="project-header">
+					<div class="eyebrow">
+						<a class="category-link" href={`/work/${category}`}>{category}</a>
+						{timeline && <><span class="sep" aria-hidden="true">·</span><span>{timeline}</span></>}
+						{status && <><span class="sep" aria-hidden="true">·</span><span>{status}</span></>}
+					</div>
 					<h1>{title}</h1>
 					<p class="summary">{summary}</p>
-					<div class="project-facts">
-						<span class="fact"><span class="label">category</span><a class="value category-link" href={`/work/${category}`}>{category}</a></span>
+					<dl class="project-facts">
 						{role && (
-							<span class="fact"><span class="label">role</span><span class="value">{role}</span></span>
-						)}
-						{timeline && (
-							<span class="fact"><span class="label">when</span><span class="value">{timeline}</span></span>
-						)}
-						{status && (
-							<span class="fact"><span class="label">status</span><span class="value status">{status}</span></span>
+							<div class="fact">
+								<dt>role</dt>
+								<dd>{role}</dd>
+							</div>
 						)}
 						{stack && stack.length > 0 && (
-							<span class="fact"><span class="label">stack</span><span class="value">{stack.join(', ')}</span></span>
+							<div class="fact">
+								<dt>stack</dt>
+								<dd>{stack.join(', ')}</dd>
+							</div>
 						)}
-					</div>
+					</dl>
 					{links && links.length > 0 && (
 						<div class="project-links">
 							{links.map((link) => (
@@ -196,15 +62,174 @@ const { title, summary, category, role, stack, timeline, status, links } = Astro
 						</div>
 					)}
 				</div>
-				<hr class="project-divider" />
 				<div class="prose">
 					<slot />
 				</div>
-				<a href="/work" class="back-link">
-					<span>&larr;</span> back to work
-				</a>
+				<div class="back-row">
+					<a href="/work" class="back-link">
+						<span aria-hidden="true">&larr;</span> back to work
+					</a>
+				</div>
 			</article>
 		</main>
 		<Footer />
 	</body>
 </html>
+
+<style>
+	article {
+		max-width: var(--max-prose);
+		margin: 0 auto;
+		padding: var(--space-8) var(--space-6) var(--space-7);
+	}
+
+	.project-header {
+		margin-bottom: var(--space-7);
+	}
+
+	.eyebrow {
+		display: flex;
+		align-items: center;
+		gap: var(--space-3);
+		font-family: var(--font-mono);
+		font-size: var(--text-mono);
+		color: var(--ink-3);
+		letter-spacing: 0.04em;
+		margin-bottom: var(--space-5);
+		flex-wrap: wrap;
+	}
+
+	.eyebrow .sep {
+		opacity: 0.6;
+	}
+
+	.category-link {
+		color: var(--ink-2);
+		text-decoration: none;
+		transition: color var(--duration) var(--ease-out);
+	}
+
+	.category-link:hover {
+		color: var(--accent);
+	}
+
+	.project-header h1 {
+		font-family: var(--font-display);
+		font-weight: 300;
+		font-size: var(--text-display-lg);
+		line-height: 1.05;
+		letter-spacing: -0.03em;
+		margin: 0 0 var(--space-4);
+		color: var(--ink);
+	}
+
+	.summary {
+		font-family: var(--font-body);
+		font-style: italic;
+		font-size: 1.125rem;
+		line-height: 1.6;
+		color: var(--ink-2);
+		margin: 0 0 var(--space-6);
+		max-width: 56ch;
+	}
+
+	.project-facts {
+		display: grid;
+		grid-template-columns: 80px 1fr;
+		gap: var(--space-2) var(--space-5);
+		margin: 0 0 var(--space-5);
+		font-family: var(--font-mono);
+		font-size: var(--text-mono);
+		letter-spacing: 0.04em;
+	}
+
+	.project-facts .fact {
+		display: contents;
+	}
+
+	.project-facts dt {
+		color: var(--ink-3);
+		margin: 0;
+	}
+
+	.project-facts dd {
+		color: var(--ink);
+		margin: 0;
+	}
+
+	.project-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-4);
+		margin-top: var(--space-4);
+	}
+
+	.project-links a {
+		font-family: var(--font-mono);
+		font-size: var(--text-mono);
+		letter-spacing: 0.04em;
+		color: var(--ink);
+		border-bottom: 1px solid var(--line-strong);
+		padding-bottom: 2px;
+		transition: color var(--duration) var(--ease-out),
+			border-color var(--duration) var(--ease-out);
+	}
+
+	.project-links a:hover {
+		color: var(--accent);
+		border-bottom-color: var(--accent);
+	}
+
+	.prose {
+		padding: 0;
+		max-width: none;
+	}
+
+	.back-row {
+		margin-top: var(--space-8);
+		padding-top: var(--space-6);
+	}
+
+	.back-link {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2);
+		font-family: var(--font-mono);
+		font-size: var(--text-mono);
+		letter-spacing: 0.04em;
+		color: var(--ink-3);
+		transition: color var(--duration) var(--ease-out);
+	}
+
+	.back-link:hover {
+		color: var(--accent);
+	}
+
+	.back-link span {
+		transition: transform var(--duration) var(--ease-out);
+	}
+
+	.back-link:hover span {
+		transform: translateX(-3px);
+	}
+
+	@media (max-width: 640px) {
+		article {
+			padding: var(--space-6) var(--space-5) var(--space-7);
+		}
+
+		.summary {
+			font-size: 1rem;
+		}
+
+		.project-facts {
+			grid-template-columns: 1fr;
+			gap: var(--space-1);
+		}
+
+		.project-facts .fact {
+			display: block;
+			margin-bottom: var(--space-3);
+		}
+	}
+</style>

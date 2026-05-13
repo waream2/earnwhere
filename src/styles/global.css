@@ -1,311 +1,321 @@
 /*
- * earnwhere — editorial minimalism with warmth
- * A developer's journal, not a blog template.
+ * earnwhere — design tokens & base styles
+ *
+ * Dark-only. One accent: phosphor green, used sparingly.
  */
 
 :root {
-	/* Stone palette */
-	--bg: #faf9f7;
-	--bg-subtle: #f5f4f0;
-	--surface: #ffffff;
-	--text: #1c1917;
-	--text-secondary: #57534e;
-	--text-tertiary: #a8a29e;
-	--border: #e7e5e4;
-	--border-subtle: #f0efed;
+	color-scheme: dark;
 
-	/* Accent — burnt sienna */
-	--accent: #c2410c;
-	--accent-hover: #9a3412;
-	--accent-light: #fff7ed;
+	/* ── Palette ──────────────────────────────────────────────── */
+	--bg: #07090d;
+	--ink: #e8ece6;
+	--ink-2: #8b8f8a;
+	--ink-3: #4d5350;
+	--line: rgba(232, 236, 230, 0.08);
+	--line-strong: rgba(232, 236, 230, 0.16);
+	--accent: #5dff8a;
 
-	/* Category colors — muted, sophisticated */
-	--cat-debugging: #b45309;
-	--cat-architecture: #0369a1;
-	--cat-tooling: #4338ca;
-	--cat-process: #047857;
-	--cat-til: #7c3aed;
-	--cat-meta: #be123c;
-
-	/* Spacing scale */
-	--space-xs: 0.25rem;
-	--space-sm: 0.5rem;
-	--space-md: 1rem;
-	--space-lg: 1.5rem;
-	--space-xl: 2rem;
-	--space-2xl: 3rem;
-	--space-3xl: 4rem;
-	--space-4xl: 6rem;
-
-	/* Typography */
-	--font-body: var(--font-atkinson), 'Georgia', serif;
-	--font-display: 'Geist', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+	/* ── Typography ───────────────────────────────────────────── */
+	--font-body: 'Atkinson Hyperlegible', Georgia, serif;
+	--font-display: 'Geist', system-ui, -apple-system, sans-serif;
 	--font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
 
-	/* Sizing */
-	--max-width: 680px;
-	--header-height: 4rem;
+	/* ── Spacing scale (8px base) ─────────────────────────────── */
+	--space-1: 0.25rem;
+	--space-2: 0.5rem;
+	--space-3: 0.75rem;
+	--space-4: 1rem;
+	--space-5: 1.5rem;
+	--space-6: 2rem;
+	--space-7: 3rem;
+	--space-8: 4rem;
+	--space-9: 6rem;
+	--space-10: 8rem;
 
-	/* Shadows */
-	--shadow-sm: 0 1px 2px rgba(28, 25, 23, 0.04);
-	--shadow-md: 0 2px 8px rgba(28, 25, 23, 0.06);
+	/* ── Type scale ───────────────────────────────────────────── */
+	--text-display-xl: 4.5rem;	/* hero h1 */
+	--text-display-lg: 3.25rem;	/* page h1 */
+	--text-display-md: 1.5rem;	/* feed-entry h3 */
+	--text-body: 1rem;
+	--text-small: 0.9375rem;
+	--text-mono: 0.7rem;
 
-	/* Transitions */
+	/* ── Layout ───────────────────────────────────────────────── */
+	--max-content: 960px;
+	--max-prose: 680px;
+
+	/* ── Motion ───────────────────────────────────────────────── */
 	--ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 	--duration: 0.2s;
 }
 
-*,
-*::before,
-*::after {
-	box-sizing: border-box;
-}
+*, *::before, *::after { box-sizing: border-box; }
 
 html {
 	font-size: 18px;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	scroll-behavior: smooth;
+	background: var(--bg);
 }
 
 body {
-	font-family: var(--font-body);
 	margin: 0;
-	padding: 0;
-	background: var(--bg);
-	color: var(--text);
-	line-height: 1.7;
+	font-family: var(--font-body);
+	background: transparent;
+	color: var(--ink);
+	line-height: 1.65;
 	min-height: 100vh;
 }
 
-/* Display typography — Instrument Serif */
+/* Keep all in-flow content above the fixed background canvas. */
+.site-header,
+main,
+.site-footer {
+	position: relative;
+	z-index: 1;
+}
+
+/* Header sits above main/footer so the mobile-menu dropdown overlays them. */
+.site-header {
+	z-index: 3;
+}
+
 h1, h2, h3 {
 	font-family: var(--font-display);
 	font-weight: 400;
-	line-height: 1.2;
-	letter-spacing: -0.01em;
-	color: var(--text);
+	line-height: 1.15;
+	letter-spacing: -0.025em;
+	color: var(--ink);
+	margin: 0;
 }
 
-h1 { font-size: 2.5rem; }
+h1 { font-size: var(--text-display-lg); font-weight: 300; }
 h2 { font-size: 1.875rem; }
-h3 { font-size: 1.375rem; }
+h3 { font-size: var(--text-display-md); }
 
 h4, h5, h6 {
 	font-family: var(--font-body);
 	font-weight: 700;
 	line-height: 1.3;
-	color: var(--text);
+	margin: 0;
 }
 
-h4 { font-size: 1.125rem; }
-
 a {
-	color: var(--accent);
+	color: var(--ink);
 	text-decoration: none;
 	transition: color var(--duration) var(--ease-out);
 }
 
-a:hover {
-	color: var(--accent-hover);
-}
+a:hover { color: var(--accent); }
 
-p {
-	margin: 0 0 1.25em;
-}
+p { margin: 0 0 1.25em; }
+p:last-child { margin-bottom: 0; }
 
-img {
-	max-width: 100%;
-	height: auto;
+img { max-width: 100%; height: auto; }
+
+/* Em — the brand italic. Use for "exponential" in the hero and for
+   any phrase you want to feel like the brand voice. */
+em, .em {
+	font-style: italic;
+	font-weight: 400;
 }
 
 code {
 	font-family: var(--font-mono);
 	font-size: 0.85em;
 	padding: 0.15em 0.4em;
-	background: var(--bg-subtle);
-	border: 1px solid var(--border);
-	border-radius: 4px;
+	background: var(--line);
+	border-radius: 3px;
 }
 
 pre {
 	font-family: var(--font-mono);
 	font-size: 0.85rem;
 	padding: 1.25em 1.5em;
-	background: var(--text);
+	background: var(--ink);
 	color: var(--bg);
-	border-radius: 8px;
+	border-radius: 4px;
 	overflow-x: auto;
 	line-height: 1.6;
 }
-
-pre > code {
-	all: unset;
-}
-
-/*
- * Blockquote = Earn's voice.
- * Every quote in a post is the human author breaking in.
- * The agent narrates; the blockquote is the source talking back.
- */
-blockquote {
-	position: relative;
-	margin: 2em 0;
-	padding: 1.25em 1.5em 1.25em 2.5em;
-	background: var(--accent-light);
-	border: 1px solid #fed7aa;
-	border-left: 3px solid var(--accent);
-	border-radius: 4px;
-	color: var(--text);
-	font-style: normal;
-	font-size: 1rem;
-	line-height: 1.65;
-}
-
-blockquote::before {
-	content: "earn";
-	position: absolute;
-	top: -0.55em;
-	left: 1.25em;
-	padding: 0 0.5em;
-	background: var(--bg);
-	font-family: var(--font-mono);
-	font-size: 0.65rem;
-	font-weight: 500;
-	text-transform: uppercase;
-	letter-spacing: 0.12em;
-	color: var(--accent);
-}
-
-blockquote::after {
-	content: "";
-	position: absolute;
-	left: 1em;
-	top: 1.4em;
-	width: 0.6em;
-	height: 0.6em;
-	border-radius: 50%;
-	background: var(--accent);
-	opacity: 0.5;
-}
-
-blockquote p {
-	margin: 0 0 0.75em;
-}
-
-blockquote p:last-child {
-	margin-bottom: 0;
-}
-
-blockquote a {
-	color: var(--accent-hover);
-	text-decoration: underline;
-	text-underline-offset: 2px;
-}
+pre > code { all: unset; }
 
 hr {
 	border: none;
-	border-top: 1px solid var(--border);
+	border-top: 1px solid var(--line);
 	margin: 2em 0;
 }
 
-/* Utility */
+::selection { background: var(--accent); color: var(--bg); }
+
+/* ── Mono labels (eyebrow / date / footer) ────────────────────── */
+.mono-label {
+	font-family: var(--font-mono);
+	font-size: var(--text-mono);
+	color: var(--ink-3);
+	letter-spacing: 0.04em;
+}
+
+/* ── Hero ─────────────────────────────────────────────────────── */
+.hero {
+	padding: var(--space-9) var(--space-6) var(--space-8);
+	max-width: var(--max-content);
+	margin: 0 auto;
+	position: relative;
+}
+
+.hero .eyebrow {
+	font-family: var(--font-mono);
+	font-size: var(--text-mono);
+	color: var(--ink-3);
+	letter-spacing: 0.16em;
+	margin-bottom: var(--space-6);
+}
+
+.hero h1 {
+	font-family: var(--font-display);
+	font-weight: 300;
+	font-size: var(--text-display-xl);
+	line-height: 0.98;
+	letter-spacing: -0.035em;
+	margin: 0 0 var(--space-5);
+	max-width: 14ch;
+}
+
+.hero h1 .em {
+	font-style: italic;
+	font-weight: 300;
+	color: var(--accent);
+}
+
+.hero p {
+	font-family: var(--font-body);
+	font-style: italic;
+	font-size: 1.125rem;
+	color: var(--ink-2);
+	margin: 0;
+	max-width: 480px;
+	line-height: 1.6;
+}
+
+/* ── Feed ─────────────────────────────────────────────────────── */
+.feed {
+	max-width: var(--max-content);
+	margin: var(--space-6) auto 0;
+	padding: 0 var(--space-6);
+}
+
+.entry {
+	display: grid;
+	grid-template-columns: 110px 1fr;
+	gap: var(--space-7);
+	padding: var(--space-6) 0;
+	align-items: baseline;
+}
+
+.entry .date {
+	font-family: var(--font-mono);
+	font-size: var(--text-mono);
+	color: var(--ink-3);
+	letter-spacing: 0.04em;
+}
+
+.entry h3 {
+	font-family: var(--font-display);
+	font-weight: 400;
+	font-size: var(--text-display-md);
+	line-height: 1.3;
+	letter-spacing: -0.012em;
+	margin: 0 0 var(--space-2);
+}
+
+.entry h3 a {
+	color: var(--ink);
+}
+
+.entry h3 a:hover {
+	color: var(--accent);
+}
+
+.entry .hook {
+	font-family: var(--font-body);
+	font-style: italic;
+	font-size: var(--text-small);
+	color: var(--ink-2);
+	margin: 0;
+	line-height: 1.6;
+	max-width: 56ch;
+}
+
+/* ── Prose (post body) ────────────────────────────────────────── */
+.prose {
+	max-width: var(--max-prose);
+	margin: 0 auto;
+	padding: 0 var(--space-6);
+}
+
+.prose h2 { margin: 2em 0 0.75em; }
+.prose h3 { margin: 1.5em 0 0.5em; }
+.prose p { margin-bottom: 1.5em; }
+.prose ul, .prose ol { padding-left: 1.25em; margin-bottom: 1.5em; }
+.prose li { margin-bottom: 0.5em; }
+.prose img { border-radius: 4px; margin: 1.5em 0; }
+
+/* Earn's voice — blockquote, kept simple */
+blockquote {
+	margin: 2em 0;
+	padding: 0 0 0 var(--space-5);
+	border-left: 2px solid var(--accent);
+	font-style: italic;
+	color: var(--ink-2);
+}
+blockquote p:last-child { margin-bottom: 0; }
+
+/* ── Footer ───────────────────────────────────────────────────── */
+.site-footer {
+	max-width: var(--max-content);
+	margin: var(--space-9) auto 0;
+	padding: var(--space-6) var(--space-6) var(--space-7);
+	font-family: var(--font-mono);
+	font-size: var(--text-mono);
+	color: var(--ink-3);
+	letter-spacing: 0.04em;
+}
+
+/* ── Utilities ────────────────────────────────────────────────── */
 .sr-only {
 	position: absolute;
-	width: 1px;
-	height: 1px;
-	padding: 0;
-	margin: -1px;
+	width: 1px; height: 1px;
+	padding: 0; margin: -1px;
 	overflow: hidden;
 	clip: rect(0, 0, 0, 0);
 	white-space: nowrap;
 	border: 0;
 }
 
-/* Prose styling for post content */
-.prose {
-	max-width: var(--max-width);
-	margin: 0 auto;
+.page-content {
+	animation: fadeIn 0.4s var(--ease-out) both;
 }
 
-.prose h2 {
-	margin: 2em 0 0.75em;
-}
-
-.prose h3 {
-	margin: 1.5em 0 0.5em;
-}
-
-.prose p {
-	margin-bottom: 1.5em;
-}
-
-.prose ul,
-.prose ol {
-	padding-left: 1.25em;
-	margin-bottom: 1.5em;
-}
-
-.prose li {
-	margin-bottom: 0.5em;
-}
-
-.prose img {
-	border-radius: 8px;
-	margin: 1.5em 0;
-}
-
-/* Category tag */
-.category-tag {
-	display: inline-block;
-	font-family: var(--font-mono);
-	font-size: 0.7rem;
-	font-weight: 500;
-	text-transform: uppercase;
-	letter-spacing: 0.08em;
-	padding: 0.2em 0.6em;
-	border-radius: 3px;
-	line-height: 1;
-}
-
-.category-tag[data-category="debugging"] {
-	color: var(--cat-debugging);
-	background: #fffbeb;
-}
-.category-tag[data-category="architecture"] {
-	color: var(--cat-architecture);
-	background: #f0f9ff;
-}
-.category-tag[data-category="tooling"] {
-	color: var(--cat-tooling);
-	background: #eef2ff;
-}
-.category-tag[data-category="process"] {
-	color: var(--cat-process);
-	background: #ecfdf5;
-}
-.category-tag[data-category="til"] {
-	color: var(--cat-til);
-	background: #f5f3ff;
-}
-.category-tag[data-category="meta"] {
-	color: var(--cat-meta);
-	background: #fff1f2;
-}
-
-/* Page transitions */
 @keyframes fadeIn {
 	from { opacity: 0; transform: translateY(8px); }
 	to { opacity: 1; transform: translateY(0); }
 }
 
-.page-content {
-	animation: fadeIn 0.4s var(--ease-out) both;
-}
-
-/* Responsive */
+/* ── Responsive ───────────────────────────────────────────────── */
 @media (max-width: 640px) {
 	html { font-size: 16px; }
-	h1 { font-size: 2rem; }
-	h2 { font-size: 1.5rem; }
+	:root {
+		--text-display-xl: 3rem;
+		--text-display-lg: 2.25rem;
+		--text-display-md: 1.25rem;
+	}
+	.hero { padding: var(--space-7) var(--space-5) var(--space-6); }
+	.feed { padding: 0 var(--space-5); }
+	.entry {
+		grid-template-columns: 1fr;
+		gap: var(--space-2);
+	}
 }
