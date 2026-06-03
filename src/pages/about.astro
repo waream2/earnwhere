@@ -15,18 +15,33 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 		<main class="page-content">
 			<article class="about prose">
 				<div class="eyebrow">about</div>
-				<h1>I build the systems behind <span class="em">agentic</span> software.</h1>
+				<h1>I'm a builder powered by <span class="em">curiosity</span>.</h1>
 				<p>I'm a Senior Applied AI Engineer and backend/platform builder in Richmond, Virginia. My work sits where LLMs meet systems that have to be correct: application engines, payments, policy workflows, retrieval tools, and the backend boundaries that keep agents useful without letting them invent their way around the rules.</p>
 
 				<p>I started in product, got curious about how the technology actually worked, and learned to build it. The product brain never went anywhere. When I sit with a customer or stakeholder, I still hear the operational shape of the problem first, then look for the smallest technical move that makes the system easier to use, safer to extend, or calmer to run.</p>
 
 				<p>At Buddy Technology, I grew from junior engineer into senior applied-AI and backend/platform work. The startup environment forced me across the stack: TypeScript runtimes, React and Next.js surfaces, payments, partner integrations, MongoDB and PostgreSQL data flows, AWS infrastructure, and eventually MCP servers and AI-guided application workflows.</p>
 
-				<p>What I'm best at is translating messy domain pressure into reusable infrastructure. I like the work where a narrow ticket reveals a deeper platform problem: a one-off crypto integration that should become a team-safe library, a manual Stripe Apps release process that should become a deploy platform, or a deterministic application engine that should become the thing an LLM can safely drive.</p>
+				<p>What I'm best at is translating messy domain pressure into reusable infrastructure. I like the work where a narrow ticket reveals a deeper platform problem. A lot of my best work has started as a curiosity-led sidequest, then turned into something with real business weight.</p>
 
 				<p>I think good software has a small footprint. It is extensible by nature, clear in its intent, declarative where it can be, and useful both in isolation and as part of a larger system. With agents in the loop, small teams can ship faster than ever, but only if the engineers in the room know how to steer the work instead of being steered by it.</p>
 
 				<p>Outside of work I'm raising three boys. Watching them learn to navigate the world, ask better questions, and stay curious is what's actually driving me right now. I'm learning from them how to show up as a better engineer, teammate, and person.</p>
+
+				<section class="contact-card" aria-label="Contact Aaron Ware">
+					<figure class="portrait">
+						<img src="/images/aaron-ware.jpg" alt="Aaron Ware" loading="lazy" decoding="async" />
+					</figure>
+					<div class="contact-copy">
+						<div class="eyebrow">contact</div>
+						<h2>Let's talk about applied AI systems, platform work, or the strange little edge where product pressure turns into infrastructure.</h2>
+						<div class="contact-links">
+							<a href="mailto:aaronmware0@gmail.com">email</a>
+							<a href="https://github.com/waream2" target="_blank" rel="noopener noreferrer">github</a>
+							<a href="https://www.linkedin.com/in/aaronware1" target="_blank" rel="noopener noreferrer">linkedin</a>
+						</div>
+					</div>
+				</section>
 			</article>
 		</main>
 		<Footer />
@@ -40,7 +55,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 
 	.about {
 		position: relative;
-		max-width: var(--max-prose);
+		max-width: var(--max-content);
 		margin: 0 auto;
 		padding: var(--space-9) var(--space-6) var(--space-8);
 	}
@@ -70,6 +85,10 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 		color: var(--accent);
 	}
 
+	.about > p {
+		max-width: var(--max-prose);
+	}
+
 	.about p {
 		font-family: var(--font-body);
 		color: var(--ink-2);
@@ -82,9 +101,85 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 		margin-bottom: 0;
 	}
 
+	.portrait {
+		margin: 0;
+		width: 118px;
+		aspect-ratio: 1;
+		border: 1px solid var(--line-strong);
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		overflow: hidden;
+		background: rgba(232, 236, 230, 0.04);
+		flex: 0 0 auto;
+	}
+
+	.portrait img {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: center;
+		filter: saturate(0.82) contrast(1.02);
+	}
+
+	.contact-card {
+		max-width: var(--max-content);
+		display: grid;
+		grid-template-columns: 96px minmax(0, 1fr);
+		gap: var(--space-6);
+		align-items: center;
+		margin-top: var(--space-8);
+		padding-top: var(--space-6);
+		border-top: 1px solid var(--line-strong);
+	}
+
+	.contact-copy .eyebrow {
+		margin-bottom: var(--space-3);
+	}
+
+	.contact-copy h2 {
+		font-size: 1.25rem;
+		line-height: 1.35;
+		letter-spacing: -0.015em;
+		margin: 0 0 var(--space-4);
+		max-width: 34rem;
+	}
+
+	.contact-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-4);
+		font-family: var(--font-mono);
+		font-size: var(--text-mono);
+		letter-spacing: 0.04em;
+	}
+
+	.contact-links a {
+		color: var(--ink);
+		border-bottom: 1px solid var(--line-strong);
+		padding-bottom: 2px;
+	}
+
+	.contact-links a:hover {
+		color: var(--accent);
+		border-bottom-color: var(--accent);
+	}
+
 	@media (max-width: 640px) {
 		.about {
 			padding: var(--space-7) var(--space-5) var(--space-7);
 		}
+
+		.contact-card {
+			grid-template-columns: 72px 1fr;
+			gap: var(--space-4);
+			align-items: start;
+		}
+
+		.portrait { width: 72px; }
+
+		.contact-copy h2 { font-size: 1rem; }
 	}
 </style>

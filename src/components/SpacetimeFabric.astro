@@ -289,11 +289,60 @@ const {
 		// ── Shooting stars ────────────────────────────────────────
 		const stars: Star[] = [];
 		const STAR_MAX = 3;
+		const BLACK_HOLE_STAR_MAX = 9;
 		const STAR_SPAWN_PROB = 0.0022;
+		const BLACK_HOLE_STAR_SPAWN_PROB = 0.045;
+
+		function spawnStarTowardBlackHole() {
+			const side = Math.floor(Math.random() * 4);
+			let x = 0;
+			let y = 0;
+			if (side === 0) {
+				x = -60;
+				y = Math.random() * h;
+			} else if (side === 1) {
+				x = w + 60;
+				y = Math.random() * h;
+			} else if (side === 2) {
+				x = Math.random() * w;
+				y = -60;
+			} else {
+				x = Math.random() * w;
+				y = h + 60;
+			}
+
+			const dx = bhX - x;
+			const dy = bhY - y;
+			const d = Math.hypot(dx, dy) || 1;
+			const speed = 4 + Math.random() * 4;
+			const tangent = (Math.random() - 0.5) * 2.2;
+			const vx = (dx / d) * speed + (-dy / d) * tangent;
+			const vy = (dy / d) * speed + (dx / d) * tangent;
+			stars.push({
+				x, y, vx, vy,
+				life: 0,
+				maxLife: 120 + Math.random() * 80,
+				length: 90 + Math.random() * 110,
+			});
+		}
+
+		function seedBlackHoleStars() {
+			while (stars.length < Math.min(BLACK_HOLE_STAR_MAX, 6)) {
+				spawnStarTowardBlackHole();
+			}
+		}
 
 		function maybeSpawnStar() {
-			if (stars.length >= STAR_MAX) return;
-			if (Math.random() > STAR_SPAWN_PROB) return;
+			const activeMax = bhIntensity > 0 ? BLACK_HOLE_STAR_MAX : STAR_MAX;
+			const spawnProb = bhIntensity > 0
+				? BLACK_HOLE_STAR_SPAWN_PROB * (0.35 + bhIntensity * 0.65)
+				: STAR_SPAWN_PROB;
+			if (stars.length >= activeMax) return;
+			if (Math.random() > spawnProb) return;
+			if (bhIntensity > 0) {
+				spawnStarTowardBlackHole();
+				return;
+			}
 			const fromLeft = Math.random() < 0.5;
 			const baseAngle = fromLeft ? Math.PI * 0.13 : Math.PI * 0.67;
 			const angle = baseAngle + Math.random() * Math.PI * 0.20;
@@ -312,10 +361,37 @@ const {
 			});
 		}
 
+		function pullStarIntoBlackHole(s: Star) {
+			if (bhIntensity <= 0) return false;
+			const dx = bhX - s.x;
+			const dy = bhY - s.y;
+			const d = Math.hypot(dx, dy) || 1;
+			const eventR = bhEventHorizon();
+			if (d < eventR * 0.9) return true;
+
+			const reach = Math.max(R * 0.9, eventR * 9);
+			const falloff = Math.max(0, 1 - Math.min(d / reach, 1));
+			const accel = (0.12 + falloff * 0.42) * bhIntensity;
+			s.vx += (dx / d) * accel;
+			s.vy += (dy / d) * accel;
+
+			const maxSpeed = 14 + bhIntensity * 12;
+			const speed = Math.hypot(s.vx, s.vy);
+			if (speed > maxSpeed) {
+				s.vx = (s.vx / speed) * maxSpeed;
+				s.vy = (s.vy / speed) * maxSpeed;
+			}
+			return false;
+		}
+
 		function drawStars() {
 			for (let i = stars.length - 1; i >= 0; i--) {
 				const s = stars[i];
 				s.life++;
+				if (pullStarIntoBlackHole(s)) {
+					stars.splice(i, 1);
+					continue;
+				}
 				s.x += s.vx;
 				s.y += s.vy;
 
@@ -324,11 +400,12 @@ const {
 				if (t < 0.25) alpha = t / 0.25;
 				else if (t > 0.70) alpha = (1 - t) / 0.30;
 				else alpha = 1;
-				alpha *= 0.55;
+				alpha *= bhIntensity > 0 ? 0.75 : 0.55;
 
 				const norm = Math.hypot(s.vx, s.vy);
-				const tx = s.x - (s.vx / norm) * s.length;
-				const ty = s.y - (s.vy / norm) * s.length;
+				const tailLength = s.length * (1 + bhIntensity * 0.8);
+				const tx = s.x - (s.vx / norm) * tailLength;
+				const ty = s.y - (s.vy / norm) * tailLength;
 
 				const g = ctx.createLinearGradient(s.x, s.y, tx, ty);
 				g.addColorStop(0, `rgba(232, 236, 230, ${alpha})`);
@@ -348,9 +425,9 @@ const {
 
 				if (
 					s.life >= s.maxLife ||
-					s.y > h + 80 ||
-					s.x < -80 ||
-					s.x > w + 80
+					s.y > h + (bhIntensity > 0 ? 240 : 80) ||
+					s.x < -(bhIntensity > 0 ? 240 : 80) ||
+					s.x > w + (bhIntensity > 0 ? 240 : 80)
 				) {
 					stars.splice(i, 1);
 				}
@@ -443,6 +520,7 @@ const {
 				blackHoleMode = true;
 				bhX = w / 2;
 				bhY = h / 2;
+				seedBlackHoleStars();
 				captureWarpTargets();
 				document.body.classList.add('black-hole-active');
 			} else if (!detail.blackHole && blackHoleMode) {
