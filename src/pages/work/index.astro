@@ -4,12 +4,17 @@ import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
 import ProjectList from '../../components/ProjectList.astro';
+import ProjectGallery from '../../components/ProjectGallery.astro';
 import WorkFilter from '../../components/WorkFilter.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 
 const projects = (await getCollection('projects'))
 	.filter((project) => !project.data.draft)
 	.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const professional = projects.filter((p) => p.data.category === 'professional');
+const personal = projects.filter((p) => p.data.category === 'personal');
+const craft = projects.filter((p) => p.data.category === 'craft');
 ---
 
 <!doctype html>
@@ -27,7 +32,36 @@ const projects = (await getCollection('projects'))
 			</section>
 
 			<WorkFilter active="all" />
-			<ProjectList projects={projects} />
+
+			{professional.length > 0 && (
+				<section class="work-section">
+					<header class="section-head">
+						<h2>professional.</h2>
+						<a class="section-more" href="/work/professional">all professional &rarr;</a>
+					</header>
+					<ProjectList projects={professional} />
+				</section>
+			)}
+
+			{personal.length > 0 && (
+				<section class="work-section">
+					<header class="section-head">
+						<h2>personal.</h2>
+						<a class="section-more" href="/work/personal">all personal &rarr;</a>
+					</header>
+					<ProjectGallery projects={personal} />
+				</section>
+			)}
+
+			{craft.length > 0 && (
+				<section class="work-section">
+					<header class="section-head">
+						<h2>craft.</h2>
+						<a class="section-more" href="/work/craft">all craft &rarr;</a>
+					</header>
+					<ProjectGallery projects={craft} />
+				</section>
+			)}
 		</main>
 		<Footer />
 	</body>
@@ -74,9 +108,50 @@ const projects = (await getCollection('projects'))
 		line-height: 1.6;
 	}
 
+	.work-section {
+		max-width: var(--max-content);
+		margin: 0 auto;
+	}
+
+	.section-head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: var(--space-5);
+		padding: var(--space-7) var(--space-6) var(--space-5);
+		flex-wrap: wrap;
+	}
+
+	.section-head h2 {
+		font-family: var(--font-display);
+		font-weight: 300;
+		font-size: 1.75rem;
+		letter-spacing: -0.025em;
+		color: var(--ink);
+		margin: 0;
+	}
+
+	.section-more {
+		font-family: var(--font-mono);
+		font-size: var(--text-mono);
+		letter-spacing: 0.04em;
+		color: var(--ink-3);
+		text-transform: lowercase;
+		text-decoration: none;
+		transition: color var(--duration) var(--ease-out);
+	}
+
+	.section-more:hover {
+		color: var(--accent);
+	}
+
 	@media (max-width: 640px) {
 		.work-header {
 			padding: var(--space-7) var(--space-5) var(--space-6);
+		}
+
+		.section-head {
+			padding: var(--space-6) var(--space-5) var(--space-4);
 		}
 	}
 </style>

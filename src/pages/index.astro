@@ -6,9 +6,26 @@ import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 
+const FEATURED_PROJECTS = [
+	'mcp-insurance-applications',
+	'stripe-apps-deploy-platform',
+	'lactsafe',
+	'folio',
+	'myhotelreports',
+];
+
 const posts = (await getCollection('posts'))
 	.filter((post) => !post.data.draft)
 	.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const projects = (await getCollection('projects'))
+	.filter((project) => !project.data.draft);
+
+const featuredProjects = FEATURED_PROJECTS
+	.map((id) => projects.find((project) => project.id === id))
+	.filter((project) => project !== undefined);
+
+const latestPosts = posts.slice(0, 2);
 ---
 
 <!doctype html>
@@ -20,45 +37,308 @@ const posts = (await getCollection('posts'))
 		<Header />
 		<main class="page-content">
 			<section class="hero">
-				<div class="eyebrow">earnwhere · field notes</div>
+				<div class="eyebrow">aaron ware · applied ai systems</div>
 				<h1>
-					notes from the <span class="em">exponential</span> edge.
+					Exploring what AI can do, then building systems that make it <span class="em">useful</span>
 				</h1>
 				<p>
-					observations on development and the technology around it — written alongside the agents I work with
+					Senior Applied AI Engineer and backend/platform builder working on LLM-guided workflows, dynamic application runtimes, payments, and complex business operations.
 				</p>
+				<div class="hero-links" aria-label="primary links">
+					<a class="cta cta-primary" href="/work">
+						see the work
+						<span class="cta-arrow" aria-hidden="true">&rarr;</span>
+					</a>
+					<a class="cta cta-secondary" href="/about">
+						about me
+						<span class="cta-arrow" aria-hidden="true">&rarr;</span>
+					</a>
+				</div>
 			</section>
 
-			<section class="feed">
-				{posts.length === 0 ? (
-					<p class="empty-state">
-						<span class="em">no entries yet.</span>
-					</p>
-				) : (
-					posts.map((post) => (
-						<article class="entry">
-							<div class="date">
-								<FormattedDate date={post.data.date} />
-							</div>
-							<div>
-								<h3>
-									<a href={`/posts/${post.id}/`}>{post.data.title}</a>
-								</h3>
-								<p class="hook">{post.data.hook}</p>
-							</div>
-						</article>
-					))
-				)}
+			<section class="home-section">
+				<header class="section-head">
+					<h2 class="section-title">current interests</h2>
+				</header>
+				<div class="signals">
+					<div class="signal">
+						<span class="signal-label">agentic systems</span>
+						<p>MCP servers, tool-use boundaries, prompt architecture, and workflow-shaped AI interfaces.</p>
+					</div>
+					<div class="signal">
+						<span class="signal-label">platform runtimes</span>
+						<p>Reusable TypeScript engines that carry domain logic across web, headless, Stripe, and AI surfaces.</p>
+					</div>
+					<div class="signal">
+						<span class="signal-label">business infrastructure</span>
+						<p>Payments, partner integrations, policy lifecycles, PDF workflows, and data-backed operational tools.</p>
+					</div>
+				</div>
+			</section>
+
+			<section class="home-section">
+				<header class="section-head">
+					<h2 class="section-title">selected work</h2>
+					<a class="section-link" href="/work">all work &rarr;</a>
+				</header>
+				<div class="featured-work">
+					{featuredProjects.map((project) => (
+						<a class="featured-project" href={`/work/projects/${project.id}/`}>
+							<span class="project-meta">{project.data.category}</span>
+							<h3>
+								<span class="featured-title">{project.data.title}</span>
+								<span class="card-arrow" aria-hidden="true">&rarr;</span>
+							</h3>
+							<p>{project.data.summary}</p>
+						</a>
+					))}
+				</div>
+			</section>
+
+			<section class="home-section">
+				<header class="section-head">
+					<h2 class="section-title">Writings</h2>
+					<a class="section-link" href="/writing">all writing &rarr;</a>
+				</header>
+				<div class="feed home-feed">
+					{latestPosts.length === 0 ? (
+						<p class="empty-state">
+							<span class="em">field notes are taking shape. check back soon.</span>
+						</p>
+					) : (
+						latestPosts.map((post) => (
+							<article class="entry">
+								<div class="date">
+									<FormattedDate date={post.data.date} />
+								</div>
+								<div>
+									<h3>
+										<a href={`/posts/${post.id}/`}>{post.data.title}</a>
+									</h3>
+									<p class="hook">{post.data.hook}</p>
+								</div>
+							</article>
+						))
+					)}
+				</div>
 			</section>
 		</main>
 		<Footer />
 
 		<style>
+			.hero h1 {
+				max-width: 18ch;
+			}
+
+			.hero p {
+				max-width: 620px;
+			}
+
+			.hero-links {
+				display: flex;
+				flex-wrap: wrap;
+				align-items: center;
+				gap: var(--space-3) var(--space-5);
+				margin-top: var(--space-7);
+				font-family: var(--font-mono);
+				font-size: var(--text-mono);
+				letter-spacing: 0.04em;
+			}
+
+			.cta {
+				display: inline-flex;
+				align-items: center;
+				gap: var(--space-2);
+				text-decoration: none;
+			}
+
+			.cta-arrow {
+				transition: transform var(--duration) var(--ease-out);
+			}
+
+			.cta:hover .cta-arrow {
+				transform: translateX(3px);
+			}
+
+			/* Primary — a quiet outlined button that lights up on hover. */
+			.cta-primary {
+				color: var(--ink);
+				padding: 0.7em 1.1em;
+				border: 1px solid var(--line-strong);
+				border-radius: 2px;
+				transition: color var(--duration) var(--ease-out),
+					border-color var(--duration) var(--ease-out),
+					background-color var(--duration) var(--ease-out);
+			}
+
+			.cta-primary:hover {
+				color: var(--accent);
+				border-color: var(--accent);
+				background-color: rgba(93, 255, 138, 0.06);
+			}
+
+			/* Secondary — quiet text link, sits beside the primary. */
+			.cta-secondary {
+				color: var(--ink-2);
+				padding: 0.7em 0;
+				transition: color var(--duration) var(--ease-out);
+			}
+
+			.cta-secondary:hover {
+				color: var(--accent);
+			}
+
+			.signals {
+				display: grid;
+				grid-template-columns: repeat(3, minmax(0, 1fr));
+				gap: var(--space-5);
+			}
+
+			.signal {
+				border-top: 1px solid var(--line-strong);
+				padding-top: var(--space-4);
+			}
+
+			.signal-label,
+			.project-meta {
+				display: block;
+				font-family: var(--font-mono);
+				font-size: var(--text-mono);
+				letter-spacing: 0.06em;
+				text-transform: lowercase;
+				color: var(--ink-3);
+			}
+
+			.signal p {
+				color: var(--ink-2);
+				font-size: 0.95rem;
+				line-height: 1.6;
+				margin: var(--space-3) 0 0;
+			}
+
+			.home-section {
+				max-width: var(--max-content);
+				margin: 0 auto;
+				padding: var(--space-7) var(--space-6) 0;
+			}
+
+			.section-head {
+				display: flex;
+				justify-content: space-between;
+				align-items: end;
+				gap: var(--space-6);
+				margin-bottom: var(--space-5);
+			}
+
+			.section-title {
+				font-family: var(--font-mono);
+				font-size: 0.875rem;
+				font-weight: 400;
+				letter-spacing: 0.16em;
+				line-height: 1;
+				color: var(--accent);
+				margin: 0;
+			}
+
+			.section-link {
+				font-family: var(--font-mono);
+				font-size: var(--text-mono);
+				letter-spacing: 0.04em;
+				color: var(--ink-3);
+				white-space: nowrap;
+			}
+
+			.section-link:hover {
+				color: var(--accent);
+			}
+
+			.featured-work {
+				display: grid;
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+				gap: var(--space-6);
+			}
+
+			.featured-project {
+				display: block;
+				border-top: 1px solid var(--line-strong);
+				padding-top: var(--space-4);
+				color: inherit;
+				text-decoration: none;
+				transition: border-color var(--duration) var(--ease-out),
+					transform var(--duration) var(--ease-out);
+			}
+
+			.featured-project:hover {
+				border-top-color: var(--accent);
+				transform: translateY(-2px);
+			}
+
+			.featured-project h3 {
+				display: flex;
+				align-items: baseline;
+				gap: var(--space-3);
+				font-family: var(--font-display);
+				font-size: 1.35rem;
+				font-weight: 400;
+				line-height: 1.25;
+				margin: var(--space-3) 0;
+				color: var(--ink);
+				transition: color var(--duration) var(--ease-out);
+			}
+
+			.featured-project:hover h3 {
+				color: var(--accent);
+			}
+
+			.card-arrow {
+				font-family: var(--font-mono);
+				font-size: 0.85rem;
+				color: var(--ink-3);
+				opacity: 0;
+				transform: translateX(-4px);
+				transition: opacity var(--duration) var(--ease-out),
+					transform var(--duration) var(--ease-out),
+					color var(--duration) var(--ease-out);
+			}
+
+			.featured-project:hover .card-arrow,
+			.featured-project:focus-visible .card-arrow {
+				opacity: 1;
+				transform: translateX(0);
+				color: var(--accent);
+			}
+
+			.featured-project p {
+				color: var(--ink-2);
+				font-style: italic;
+				font-size: 0.95rem;
+				line-height: 1.6;
+				margin: 0;
+			}
+
+			.home-feed {
+				margin-top: 0;
+				padding: 0;
+			}
+
 			.empty-state {
 				text-align: center;
 				color: var(--ink-3);
 				padding: var(--space-8) var(--space-6);
 				font-family: var(--font-body);
+			}
+
+			@media (max-width: 760px) {
+				.signals,
+				.featured-work {
+					grid-template-columns: 1fr;
+				}
+
+				.section-head {
+					align-items: flex-start;
+					flex-direction: column;
+					gap: var(--space-3);
+				}
 			}
 		</style>
 	</body>

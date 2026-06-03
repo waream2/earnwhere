@@ -17,6 +17,7 @@ const isActive =
 
 <style>
 	a {
+		position: relative;
 		font-family: var(--font-mono);
 		font-size: 0.75rem;
 		color: var(--ink-2);
@@ -28,5 +29,22 @@ const isActive =
 	a:hover,
 	a.active {
 		color: var(--ink);
+	}
+
+	/* Active-page marker: a small accent dash under the current section. */
+	a.active::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: -6px;
+		height: 1px;
+		background: var(--accent);
+		animation: navMark var(--duration) var(--ease-out) both;
+	}
+
+	@keyframes navMark {
+		from { transform: scaleX(0); opacity: 0; }
+		to { transform: scaleX(1); opacity: 1; }
 	}
 </style>

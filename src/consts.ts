@@ -1,2 +1,3 @@
-export const SITE_TITLE = 'earnwhere';
-export const SITE_DESCRIPTION = 'Notes from the exponential edge.';
+export const SITE_TITLE = 'Aaron Ware';
+export const SITE_DESCRIPTION =
+	'Senior Applied AI Engineer building LLM-guided workflows, backend platforms, and dynamic application runtimes.';

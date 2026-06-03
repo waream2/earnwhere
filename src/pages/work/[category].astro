@@ -4,6 +4,7 @@ import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
 import ProjectList from '../../components/ProjectList.astro';
+import ProjectGallery from '../../components/ProjectGallery.astro';
 import WorkFilter from '../../components/WorkFilter.astro';
 import { SITE_TITLE } from '../../consts';
 
@@ -28,6 +29,7 @@ const projects = (await getCollection('projects'))
 	.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
 const tagline = TAGLINES[category];
+const useGallery = category !== 'professional';
 ---
 
 <!doctype html>
@@ -45,10 +47,17 @@ const tagline = TAGLINES[category];
 			</section>
 
 			<WorkFilter active={category} />
-			<ProjectList
-				projects={projects}
-				emptyMessage={`Nothing under ${category} yet.`}
-			/>
+			{useGallery ? (
+				<ProjectGallery
+					projects={projects}
+					emptyMessage={`Nothing under ${category} yet.`}
+				/>
+			) : (
+				<ProjectList
+					projects={projects}
+					emptyMessage={`Nothing under ${category} yet.`}
+				/>
+			)}
 		</main>
 		<Footer />
 	</body>

@@ -1,0 +1,65 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import Header from '../components/Header.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+
+const posts = (await getCollection('posts'))
+	.filter((post) => !post.data.draft)
+	.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Writing — ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<Header />
+		<main class="page-content">
+			<section class="hero">
+				<div class="eyebrow">aaron ware · field notes</div>
+				<h1>
+					notes from the <span class="em">exponential</span> edge.
+				</h1>
+				<p>
+					observations on development and the technology around it, written alongside the agents I work with
+				</p>
+			</section>
+
+			<section class="feed">
+				{posts.length === 0 ? (
+					<p class="empty-state">
+						<span class="em">field notes are taking shape. check back soon.</span>
+					</p>
+				) : (
+					posts.map((post) => (
+						<article class="entry">
+							<div class="date">
+								<FormattedDate date={post.data.date} />
+							</div>
+							<div>
+								<h3>
+									<a href={`/posts/${post.id}/`}>{post.data.title}</a>
+								</h3>
+								<p class="hook">{post.data.hook}</p>
+							</div>
+						</article>
+					))
+				)}
+			</section>
+		</main>
+		<Footer />
+
+		<style>
+			.empty-state {
+				text-align: center;
+				color: var(--ink-3);
+				padding: var(--space-8) var(--space-6);
+				font-family: var(--font-body);
+			}
+		</style>
+	</body>
+</html>

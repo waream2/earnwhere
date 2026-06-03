@@ -11,15 +11,15 @@
 	--bg: #07090d;
 	--ink: #e8ece6;
 	--ink-2: #8b8f8a;
-	--ink-3: #4d5350;
+	--ink-3: #e8ece6;
 	--line: rgba(232, 236, 230, 0.08);
 	--line-strong: rgba(232, 236, 230, 0.16);
 	--accent: #5dff8a;
 
 	/* ── Typography ───────────────────────────────────────────── */
-	--font-body: 'Atkinson Hyperlegible', Georgia, serif;
-	--font-display: 'Geist', system-ui, -apple-system, sans-serif;
-	--font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+	--font-body: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+	--font-display: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+	--font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
 
 	/* ── Spacing scale (8px base) ─────────────────────────────── */
 	--space-1: 0.25rem;
@@ -149,6 +149,50 @@ hr {
 }
 
 ::selection { background: var(--accent); color: var(--bg); }
+
+/* ── Focus ────────────────────────────────────────────────────── */
+:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 3px;
+	border-radius: 2px;
+}
+/* Don't double up the outline with a hover color shift on links. */
+a:focus-visible { color: var(--ink); }
+
+/* ── Status badge (shipped / in-progress / archived) ──────────── */
+.status-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5em;
+	font-family: var(--font-mono);
+	font-size: var(--text-mono);
+	letter-spacing: 0.04em;
+	text-transform: lowercase;
+	color: var(--ink-2);
+}
+
+.status-badge::before {
+	content: '';
+	flex: none;
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: var(--ink-3);
+}
+
+.status-badge[data-status='shipped']::before {
+	background: var(--accent);
+	box-shadow: 0 0 6px rgba(93, 255, 138, 0.55);
+}
+
+.status-badge[data-status='in-progress']::before {
+	background: #f5c451;
+	box-shadow: 0 0 6px rgba(245, 196, 81, 0.45);
+}
+
+.status-badge[data-status='archived']::before {
+	background: var(--ink-3);
+}
 
 /* ── Mono labels (eyebrow / date / footer) ────────────────────── */
 .mono-label {

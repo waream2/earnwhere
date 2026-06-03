@@ -1,0 +1,251 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title={`404 — ${SITE_TITLE}`}
+			description="Lost in space. This page drifted past the event horizon."
+		/>
+	</head>
+	<body>
+		<Header />
+		<main class="page-content">
+			<section class="notfound">
+				<div class="eyebrow">404 · page not found</div>
+
+				<div class="glyph" role="img" aria-label="404">
+					<span class="digit" aria-hidden="true">4</span>
+					<span class="hole" aria-hidden="true">
+						<span class="hole-ring"></span>
+						<span class="hole-core"></span>
+						<span class="orbit"></span>
+					</span>
+					<span class="digit" aria-hidden="true">4</span>
+				</div>
+
+				<h1>This page is lost in <span class="em">space</span>.</h1>
+				<p>
+					The page you're looking for doesn't exist, or it's drifted somewhere
+					we can't reach. Let's get you back on course.
+				</p>
+
+				<div class="nf-links" aria-label="get back">
+					<a class="cta cta-primary" href="/">
+						back home
+						<span class="cta-arrow" aria-hidden="true">&rarr;</span>
+					</a>
+					<a class="cta cta-secondary" href="/work">
+						see the work
+						<span class="cta-arrow" aria-hidden="true">&rarr;</span>
+					</a>
+				</div>
+
+				<p class="hint">
+					tip: type <span class="kbd">singularity</span> anywhere on the site.
+				</p>
+			</section>
+		</main>
+		<Footer />
+
+		<style>
+			.notfound {
+				max-width: var(--max-content);
+				margin: 0 auto;
+				padding: var(--space-10) var(--space-6) var(--space-9);
+				text-align: center;
+			}
+
+			.notfound .eyebrow {
+				font-family: var(--font-mono);
+				font-size: var(--text-mono);
+				color: var(--ink-3);
+				letter-spacing: 0.16em;
+				text-transform: lowercase;
+				margin-bottom: var(--space-7);
+			}
+
+			/* ── 404 glyph with a black hole for the middle "0" ──────── */
+			.glyph {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: clamp(0.5rem, 2.5vw, 1.5rem);
+				margin-bottom: var(--space-7);
+			}
+
+			.digit {
+				font-family: var(--font-display);
+				font-weight: 300;
+				font-size: clamp(5rem, 22vw, 12rem);
+				line-height: 1;
+				letter-spacing: -0.04em;
+				color: var(--ink);
+			}
+
+			.hole {
+				position: relative;
+				width: clamp(4.5rem, 19vw, 10.5rem);
+				aspect-ratio: 1;
+				flex: 0 0 auto;
+			}
+
+			/* Pure-black event horizon. */
+			.hole-core {
+				position: absolute;
+				inset: 12%;
+				border-radius: 50%;
+				background: radial-gradient(circle at 50% 50%, #000 60%, #04060a 100%);
+			}
+
+			/* Glowing photon ring. */
+			.hole-ring {
+				position: absolute;
+				inset: 4%;
+				border-radius: 50%;
+				border: 2px solid var(--accent);
+				box-shadow:
+					0 0 22px rgba(93, 255, 138, 0.45),
+					inset 0 0 22px rgba(93, 255, 138, 0.22);
+			}
+
+			/* Invisible orbit track; its dot is the satellite that circles. */
+			.orbit {
+				position: absolute;
+				inset: -7%;
+				border-radius: 50%;
+				animation: orbit 7s linear infinite;
+			}
+
+			.orbit::before {
+				content: '';
+				position: absolute;
+				top: -4px;
+				left: 50%;
+				width: 8px;
+				height: 8px;
+				margin-left: -4px;
+				border-radius: 50%;
+				background: var(--accent);
+				box-shadow: 0 0 10px rgba(93, 255, 138, 0.85);
+			}
+
+			@keyframes orbit {
+				to {
+					transform: rotate(360deg);
+				}
+			}
+
+			.notfound h1 {
+				font-family: var(--font-display);
+				font-weight: 300;
+				font-size: clamp(1.75rem, 5vw, var(--text-display-lg));
+				line-height: 1.1;
+				letter-spacing: -0.03em;
+				margin: 0 auto var(--space-5);
+				max-width: 18ch;
+			}
+
+			.notfound h1 .em {
+				font-style: italic;
+				font-weight: 300;
+				color: var(--accent);
+			}
+
+			.notfound > p {
+				font-family: var(--font-body);
+				font-style: italic;
+				font-size: 1.0625rem;
+				color: var(--ink-2);
+				line-height: 1.65;
+				margin: 0 auto;
+				max-width: 46ch;
+			}
+
+			.nf-links {
+				display: flex;
+				flex-wrap: wrap;
+				align-items: center;
+				justify-content: center;
+				gap: var(--space-3) var(--space-5);
+				margin-top: var(--space-7);
+				font-family: var(--font-mono);
+				font-size: var(--text-mono);
+				letter-spacing: 0.04em;
+			}
+
+			.cta {
+				display: inline-flex;
+				align-items: center;
+				gap: var(--space-2);
+				text-decoration: none;
+			}
+
+			.cta-arrow {
+				transition: transform var(--duration) var(--ease-out);
+			}
+
+			.cta:hover .cta-arrow {
+				transform: translateX(3px);
+			}
+
+			.cta-primary {
+				color: var(--ink);
+				padding: 0.7em 1.1em;
+				border: 1px solid var(--line-strong);
+				border-radius: 2px;
+				transition: color var(--duration) var(--ease-out),
+					border-color var(--duration) var(--ease-out),
+					background-color var(--duration) var(--ease-out);
+			}
+
+			.cta-primary:hover {
+				color: var(--accent);
+				border-color: var(--accent);
+				background-color: rgba(93, 255, 138, 0.06);
+			}
+
+			.cta-secondary {
+				color: var(--ink-2);
+				padding: 0.7em 0;
+				transition: color var(--duration) var(--ease-out);
+			}
+
+			.cta-secondary:hover {
+				color: var(--accent);
+			}
+
+			.hint {
+				margin-top: var(--space-8);
+				font-family: var(--font-mono);
+				font-size: var(--text-mono);
+				color: var(--ink-3);
+				letter-spacing: 0.04em;
+			}
+
+			.kbd {
+				color: var(--ink-2);
+				border: 1px solid var(--line);
+				border-radius: 3px;
+				padding: 1px 6px;
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+				.orbit {
+					animation: none;
+				}
+			}
+
+			@media (max-width: 640px) {
+				.notfound {
+					padding: var(--space-8) var(--space-5) var(--space-8);
+				}
+			}
+		</style>
+	</body>
+</html>

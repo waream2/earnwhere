@@ -2,7 +2,7 @@
 title: Project Title
 summary: One-sentence description that shows up in the work index and as the page subtitle.
 date: 2026-04-25
-category: personal
+category: professional
 role: solo
 stack:
   - TypeScript

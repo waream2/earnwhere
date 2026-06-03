@@ -1,0 +1,386 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+
+const RESUME_PDF = '/resume/aaron-ware-resume.pdf';
+
+const skills = [
+	{
+		label: 'ai & agentic systems',
+		body: 'Model Context Protocol, LLM tool use, RAG, prompt architecture, Anthropic SDK, OpenAI API, Voyage embeddings, streaming LLM interfaces',
+	},
+	{
+		label: 'backend & data',
+		body: 'Node.js, TypeScript, Express, REST APIs, MongoDB, PostgreSQL, DynamoDB, Supabase, Stripe, clean architecture, dependency injection',
+	},
+	{
+		label: 'frontend',
+		body: 'React, Next.js, SvelteKit, SolidJS, Chakra UI, TailwindCSS, CSS Modules, Vite',
+	},
+	{
+		label: 'cloud, testing & tools',
+		body: 'AWS ECS Fargate, Cognito, Secrets Manager, ALB, SST, Pulumi, GitHub Actions, Vercel, Render, Jest, React Testing Library, Mocha, Chai',
+	},
+];
+
+const experience = [
+	{
+		role: 'Senior Applied AI Engineer / Backend Lead',
+		org: 'Buddy Technology',
+		location: 'Richmond, VA',
+		dates: 'Jun 2021 - Present',
+		context: 'Insurance technology startup building embedded distribution, payments, and AI-guided application infrastructure.',
+		bullets: [
+			"Architected Buddy's production Model Context Protocol server in TypeScript and Node.js, enabling LLM clients to guide users through end-to-end workflows including field collection, quoting, payment, document Q&A, and policy binding.",
+			"Designed per-session MCP transports backed by Buddy's application runtime, managing field visibility, validation, view progression, disqualification logic, and asynchronous third-party quote flows across complex multi-step applications.",
+			'Managed development of a Next.js/React agentic chat application while leading prompting strategy, including model selection, prompt caching, tool-use rules, and optimization of multi-turn workflows.',
+			"Architected and shipped ITX, a platform-agnostic TypeScript framework that runs Buddy's internal product-modeling DSL across web apps, Stripe Apps, MCP servers, AI agents, and future platform targets.",
+			'Decoupled the core engine from React, creating a shared state manager, action engine, and UI orchestration layer that powers complex workflows across web, Stripe Apps, MCP servers, and headless consumers.',
+			'Built RAG-powered document Q&A using MongoDB Atlas vector search, Voyage embeddings, and score thresholding to support semantic search over policy and product documents.',
+			'Designed payments infrastructure using dependency injection, factory, and adapter patterns; implemented ACH payment microservices for asynchronous processing, observability, and logging, contributing to 2x monthly written premium and sustained 100% YoY growth.',
+			"Led backend implementation for Buddy's core transaction and policy domains, including payments, refunds, ledgers, analytics events, partner integrations, and policy lifecycle workflows.",
+			'Created and maintain a repository of internal agent skills that aid engineering teamwork through domain-specific context, guided repository onboarding, and repeatable development workflows.',
+		],
+	},
+	{
+		role: 'Digital Engagement & Product Manager',
+		org: 'Elevation Advertising',
+		location: 'Richmond, VA',
+		dates: 'May 2019 - Jun 2021',
+		context: '',
+		bullets: [
+			'Led cross-functional discovery and delivery for client websites and digital products, translating business goals into requirements, user flows, scopes of work, and implementation priorities.',
+			'Defined, prototyped, and shipped an MVP proof-of-concept application using Google Sheets, Apps Script, JavaScript, and PostgreSQL to validate workflow assumptions before deeper engineering investment.',
+			'Conducted user research, stakeholder interviews, competitive analysis, and analytics review to identify customer needs, prioritize product opportunities, and inform roadmap recommendations.',
+		],
+	},
+];
+
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Resume - ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<Header />
+		<main class="page-content">
+			<section class="resume-hero">
+				<div class="eyebrow">resume</div>
+				<div class="hero-grid">
+					<div>
+						<h1>Senior Applied AI Engineer</h1>
+						<p>
+							Applied AI and backend/platform engineer building production systems for LLM-guided workflows, dynamic application runtimes, payments, and complex business operations.
+						</p>
+					</div>
+					<aside class="resume-actions" aria-label="Resume links">
+						<a class="action action-primary" href={RESUME_PDF} download>download pdf</a>
+						<a class="action" href="mailto:aaronmware0@gmail.com">email</a>
+						<a class="action" href="https://github.com/waream2" target="_blank" rel="noopener noreferrer">github</a>
+						<a class="action" href="https://www.linkedin.com/in/aaronware1" target="_blank" rel="noopener noreferrer">linkedin</a>
+					</aside>
+				</div>
+			</section>
+
+			<section class="resume-section" aria-labelledby="skills-heading">
+				<header class="section-head">
+					<h2 class="eyebrow" id="skills-heading">skills</h2>
+				</header>
+				<div class="skill-grid">
+					{skills.map((skill) => (
+						<article class="skill-item">
+							<h3>{skill.label}</h3>
+							<p>{skill.body}</p>
+						</article>
+					))}
+				</div>
+			</section>
+
+			<section class="resume-section" aria-labelledby="experience-heading">
+				<header class="section-head">
+					<h2 class="eyebrow" id="experience-heading">experience</h2>
+				</header>
+				<div class="experience-list">
+					{experience.map((job) => (
+						<article class="experience-item">
+							<div class="role-meta">
+								<h3>{job.role}</h3>
+								<p>{job.org} | {job.location}</p>
+								<span>{job.dates}</span>
+							</div>
+							<div class="role-copy">
+								{job.context && <p class="role-context">{job.context}</p>}
+								<ul>
+									{job.bullets.map((bullet) => <li>{bullet}</li>)}
+								</ul>
+							</div>
+						</article>
+					))}
+				</div>
+			</section>
+
+			<section class="resume-section education-section" aria-labelledby="education-heading">
+				<header class="section-head">
+					<h2 class="eyebrow" id="education-heading">education</h2>
+				</header>
+				<div class="education-item">
+					<h3>Bachelor of Science, Small Business Management and Ideation</h3>
+					<p>Virginia Commonwealth University | 2015</p>
+					<p>Invited back after graduation to serve as an adjunct professor and Entrepreneur-in-Residence.</p>
+				</div>
+			</section>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.resume-hero {
+		max-width: var(--max-content);
+		margin: 0 auto;
+		padding: var(--space-9) var(--space-6) var(--space-7);
+	}
+
+	.eyebrow {
+		font-family: var(--font-mono);
+		font-size: var(--text-mono);
+		color: var(--accent);
+		letter-spacing: 0.16em;
+		text-transform: lowercase;
+		font-weight: 400;
+		margin: 0;
+	}
+
+	.hero-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 220px;
+		gap: var(--space-7);
+		align-items: end;
+		margin-top: var(--space-6);
+	}
+
+	.resume-hero h1 {
+		font-family: var(--font-display);
+		font-weight: 300;
+		font-size: var(--text-display-xl);
+		line-height: 0.98;
+		letter-spacing: 0;
+		margin: 0 0 var(--space-5);
+		max-width: 12ch;
+	}
+
+	.resume-hero p {
+		color: var(--ink-2);
+		font-size: 1.125rem;
+		line-height: 1.65;
+		margin: 0;
+		max-width: 650px;
+	}
+
+	.resume-actions {
+		display: grid;
+		gap: var(--space-3);
+		font-family: var(--font-mono);
+		font-size: var(--text-mono);
+		letter-spacing: 0.04em;
+		text-transform: lowercase;
+	}
+
+	.action {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		min-height: 42px;
+		padding: 0.7em 0.9em;
+		border: 1px solid var(--line-strong);
+		border-radius: 2px;
+		color: var(--ink);
+		transition: color var(--duration) var(--ease-out),
+			border-color var(--duration) var(--ease-out),
+			background-color var(--duration) var(--ease-out);
+	}
+
+	.action::after {
+		content: '->';
+		color: var(--ink-3);
+		transition: color var(--duration) var(--ease-out),
+			transform var(--duration) var(--ease-out);
+	}
+
+	.action-primary {
+		background: rgba(93, 255, 138, 0.06);
+		border-color: rgba(93, 255, 138, 0.45);
+	}
+
+	.action-primary::after {
+		content: 'v';
+	}
+
+	.action:hover {
+		color: var(--accent);
+		border-color: var(--accent);
+		background-color: rgba(93, 255, 138, 0.06);
+	}
+
+	.action:hover::after {
+		color: var(--accent);
+		transform: translate(2px, -2px);
+	}
+
+	.action-primary:hover::after {
+		transform: translateY(2px);
+	}
+
+	.resume-section {
+		max-width: var(--max-content);
+		margin: 0 auto;
+		padding: var(--space-7) var(--space-6) 0;
+	}
+
+	.section-head {
+		margin-bottom: var(--space-5);
+	}
+
+	.skill-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: var(--space-5);
+	}
+
+	.skill-item,
+	.experience-item,
+	.education-item {
+		border-top: 1px solid var(--line-strong);
+		padding-top: var(--space-4);
+	}
+
+	.skill-item h3,
+	.role-meta h3,
+	.education-item h3 {
+		font-family: var(--font-mono);
+		font-size: var(--text-mono);
+		letter-spacing: 0.06em;
+		text-transform: lowercase;
+		color: var(--ink-3);
+		margin: 0 0 var(--space-3);
+	}
+
+	.skill-item p,
+	.role-copy li,
+	.education-item p {
+		color: var(--ink-2);
+		font-size: 0.96rem;
+		line-height: 1.65;
+		margin: 0;
+	}
+
+	.experience-list {
+		display: grid;
+		gap: var(--space-7);
+	}
+
+	.experience-item {
+		display: grid;
+		grid-template-columns: 260px minmax(0, 1fr);
+		gap: var(--space-6);
+	}
+
+	.role-meta p,
+	.role-meta span {
+		display: block;
+		font-family: var(--font-mono);
+		font-size: var(--text-mono);
+		line-height: 1.55;
+		letter-spacing: 0.04em;
+		color: var(--ink-3);
+		margin: 0;
+		text-transform: lowercase;
+	}
+
+	.role-context {
+		color: var(--ink);
+		font-size: 1rem;
+		line-height: 1.65;
+		margin: 0 0 var(--space-4);
+	}
+
+	.role-copy ul {
+		display: grid;
+		gap: var(--space-3);
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	.role-copy li {
+		position: relative;
+		padding-left: 1.1rem;
+	}
+
+	.role-copy li::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 0.72em;
+		width: 5px;
+		height: 5px;
+		border-radius: 50%;
+		background: var(--accent);
+		box-shadow: 0 0 6px rgba(93, 255, 138, 0.55);
+	}
+
+	.education-section {
+		padding-bottom: var(--space-8);
+	}
+
+	.education-item {
+		max-width: var(--max-prose);
+	}
+
+	.education-item p + p {
+		margin-top: var(--space-3);
+	}
+
+	@media (max-width: 780px) {
+		.hero-grid,
+		.experience-item {
+			grid-template-columns: 1fr;
+			gap: var(--space-5);
+		}
+
+		.resume-actions {
+			max-width: 360px;
+		}
+
+		.skill-grid {
+			grid-template-columns: 1fr;
+		}
+
+	}
+
+	@media (max-width: 640px) {
+		.resume-hero {
+			padding: var(--space-7) var(--space-5) var(--space-6);
+		}
+
+		.resume-section {
+			padding: var(--space-6) var(--space-5) 0;
+		}
+
+		.resume-hero h1 {
+			font-size: 2.85rem;
+		}
+
+		.resume-hero p {
+			font-size: 1rem;
+		}
+
+		.education-section {
+			padding-bottom: var(--space-7);
+		}
+	}
+</style>

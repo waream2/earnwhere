@@ -36,11 +36,13 @@ const filters = [
 	}
 
 	.filter-link {
+		position: relative;
 		font-family: var(--font-mono);
 		font-size: var(--text-mono);
 		letter-spacing: 0.04em;
 		color: var(--ink-3);
 		text-decoration: none;
+		padding-bottom: var(--space-2);
 		transition: color var(--duration) var(--ease-out);
 	}
 
@@ -49,7 +51,18 @@ const filters = [
 	}
 
 	.filter-link.active {
-		color: var(--ink);
+		color: var(--accent);
+	}
+
+	/* Underline only the active filter so it reads as a selected tab. */
+	.filter-link.active::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		height: 1px;
+		background: var(--accent);
 	}
 
 	@media (max-width: 480px) {
