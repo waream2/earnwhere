@@ -11,7 +11,7 @@ interface ProjectLink {
 interface Props {
 	title: string;
 	summary: string;
-	tldr?: string;
+	image?: string;
 	date: Date;
 	category: 'professional' | 'personal' | 'craft';
 	role?: string;
@@ -21,7 +21,7 @@ interface Props {
 	links?: ProjectLink[];
 }
 
-const { title, summary, tldr, category, role, stack, timeline, status, links } = Astro.props;
+const { title, summary, image, category, stack, timeline, status, links } = Astro.props;
 ---
 
 <html lang="en">
@@ -33,28 +33,27 @@ const { title, summary, tldr, category, role, stack, timeline, status, links } =
 		<Header />
 		<main class="page-content">
 			<article>
-				<div class="project-header">
-					<div class="eyebrow">
-						<a class="category-link" href={`/work/${category}`}>{category}</a>
-						{timeline && <><span class="sep" aria-hidden="true">·</span><span>{timeline}</span></>}
-						{status && <><span class="sep" aria-hidden="true">·</span><span class="status-badge" data-status={status}>{status}</span></>}
-					</div>
-					<h1>{title}</h1>
-					<p class="summary">{summary}</p>
-					<dl class="project-facts">
-						{role && (
-							<div class="fact">
-								<dt>role</dt>
-								<dd>{role}</dd>
-							</div>
-						)}
-						{stack && stack.length > 0 && (
-							<div class="fact">
-								<dt>stack</dt>
-								<dd>{stack.join(', ')}</dd>
-							</div>
-						)}
-					</dl>
+				<div class="eyebrow">
+					<a class="category-link" href={`/work/${category}`}>{category}</a>
+					{timeline && <><span class="sep" aria-hidden="true">·</span><span>{timeline}</span></>}
+					{status && <><span class="sep" aria-hidden="true">·</span><span class="status-badge" data-status={status}>{status}</span></>}
+				</div>
+
+				<h1>{title}</h1>
+				<p class="summary">{summary}</p>
+
+				{image && (
+					<figure class="hero">
+						<img src={image} alt="" loading="eager" decoding="async" />
+					</figure>
+				)}
+
+				<div class="meta-row">
+					{stack && stack.length > 0 && (
+						<ul class="stack" aria-label="stack">
+							{stack.map((tech) => <li>{tech}</li>)}
+						</ul>
+					)}
 					{links && links.length > 0 && (
 						<div class="project-links">
 							{links.map((link) => (
@@ -63,15 +62,11 @@ const { title, summary, tldr, category, role, stack, timeline, status, links } =
 						</div>
 					)}
 				</div>
-				{tldr && (
-					<aside class="tldr">
-						<span class="tldr-label">TL;DR</span>
-						<p>{tldr}</p>
-					</aside>
-				)}
+
 				<div class="prose">
 					<slot />
 				</div>
+
 				<div class="back-row">
 					<a href="/work" class="back-link">
 						<span aria-hidden="true">&larr;</span> back to work
@@ -85,13 +80,9 @@ const { title, summary, tldr, category, role, stack, timeline, status, links } =
 
 <style>
 	article {
-		max-width: var(--max-prose);
+		max-width: var(--max-content);
 		margin: 0 auto;
 		padding: var(--space-8) var(--space-6) var(--space-7);
-	}
-
-	.project-header {
-		margin-bottom: var(--space-7);
 	}
 
 	.eyebrow {
@@ -120,7 +111,7 @@ const { title, summary, tldr, category, role, stack, timeline, status, links } =
 		color: var(--accent);
 	}
 
-	.project-header h1 {
+	h1 {
 		font-family: var(--font-display);
 		font-weight: 300;
 		font-size: var(--text-display-lg);
@@ -136,39 +127,60 @@ const { title, summary, tldr, category, role, stack, timeline, status, links } =
 		font-size: 1.125rem;
 		line-height: 1.6;
 		color: var(--ink-2);
-		margin: 0 0 var(--space-6);
+		margin: 0 0 var(--space-7);
 		max-width: 56ch;
 	}
 
-	.project-facts {
-		display: grid;
-		grid-template-columns: 80px 1fr;
-		gap: var(--space-2) var(--space-5);
-		margin: 0 0 var(--space-5);
+	.hero {
+		margin: 0 0 var(--space-7);
+		border: 1px solid var(--line);
+		border-radius: 2px;
+		overflow: hidden;
+		background: rgba(232, 236, 230, 0.03);
+	}
+
+	.hero img {
+		display: block;
+		width: 100%;
+		height: auto;
+		object-fit: cover;
+	}
+
+	.meta-row {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		align-items: flex-start;
+		gap: var(--space-5);
+		margin-bottom: var(--space-7);
+		padding-bottom: var(--space-5);
+		border-bottom: 1px solid var(--line);
+	}
+
+	.stack {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	.stack li {
 		font-family: var(--font-mono);
 		font-size: var(--text-mono);
-		letter-spacing: 0.04em;
-	}
-
-	.project-facts .fact {
-		display: contents;
-	}
-
-	.project-facts dt {
-		color: var(--ink-3);
-		margin: 0;
-	}
-
-	.project-facts dd {
-		color: var(--ink);
-		margin: 0;
+		letter-spacing: 0.06em;
+		text-transform: lowercase;
+		color: var(--ink-2);
+		padding: 3px 8px;
+		border: 1px solid var(--line);
+		border-radius: 2px;
 	}
 
 	.project-links {
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--space-4);
-		margin-top: var(--space-4);
 	}
 
 	.project-links a {
@@ -187,32 +199,12 @@ const { title, summary, tldr, category, role, stack, timeline, status, links } =
 		border-bottom-color: var(--accent);
 	}
 
-	.tldr {
-		margin: 0 0 var(--space-7);
-		padding-top: var(--space-5);
-		border-top: 1px solid var(--line-strong);
-	}
-
-	.tldr-label {
-		display: block;
-		font-family: var(--font-mono);
-		font-size: var(--text-mono);
-		letter-spacing: 0.04em;
-		color: var(--ink-3);
-		margin-bottom: var(--space-3);
-	}
-
-	.tldr p {
-		margin: 0;
-		font-family: var(--font-body);
-		font-size: 1.0625rem;
-		line-height: 1.65;
-		color: var(--ink);
-	}
-
 	.prose {
-		padding: 0;
-		max-width: none;
+		max-width: var(--max-prose);
+	}
+
+	.prose:empty {
+		display: none;
 	}
 
 	.back-row {
@@ -252,14 +244,9 @@ const { title, summary, tldr, category, role, stack, timeline, status, links } =
 			font-size: 1rem;
 		}
 
-		.project-facts {
-			grid-template-columns: 1fr;
-			gap: var(--space-1);
-		}
-
-		.project-facts .fact {
-			display: block;
-			margin-bottom: var(--space-3);
+		.meta-row {
+			flex-direction: column;
+			gap: var(--space-4);
 		}
 	}
 </style>

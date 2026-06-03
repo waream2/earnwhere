@@ -25,7 +25,9 @@ const { projects, emptyMessage = 'No projects yet — check back soon.' } = Astr
 					</h3>
 					<p class="hook">{project.data.summary}</p>
 					{project.data.status && (
-						<p class="status-line">{project.data.status}</p>
+						<p class="status-line">
+							<span class="status-badge" data-status={project.data.status}>{project.data.status}</span>
+						</p>
 					)}
 				</div>
 			</article>
@@ -49,12 +51,7 @@ const { projects, emptyMessage = 'No projects yet — check back soon.' } = Astr
 	}
 
 	.status-line {
-		font-family: var(--font-mono);
-		font-size: var(--text-mono);
-		letter-spacing: 0.04em;
-		color: var(--ink-3);
 		margin: var(--space-3) 0 0;
-		text-transform: lowercase;
 	}
 
 	.empty-state {

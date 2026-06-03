@@ -1,6 +1,7 @@
 ---
 import { type CollectionEntry, getCollection, render } from 'astro:content';
 import ProjectPage from '../../../layouts/ProjectPage.astro';
+import ProjectGalleryPage from '../../../layouts/ProjectGalleryPage.astro';
 
 export async function getStaticPaths() {
 	const projects = await getCollection('projects', ({ data }) => !data.draft);
@@ -13,8 +14,15 @@ type Props = CollectionEntry<'projects'>;
 
 const project = Astro.props;
 const { Content } = await render(project);
+const isGallery = project.data.category !== 'professional';
 ---
 
-<ProjectPage {...project.data}>
-	<Content />
-</ProjectPage>
+{isGallery ? (
+	<ProjectGalleryPage {...project.data}>
+		<Content />
+	</ProjectGalleryPage>
+) : (
+	<ProjectPage {...project.data}>
+		<Content />
+	</ProjectPage>
+)}
