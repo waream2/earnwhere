@@ -2,7 +2,7 @@
 title: "Why the latest MCP release candidate is a big deal"
 date: 2026-06-10
 category: architecture
-hook: "Why I think the next release candidate positions the MCP for a even brighter future."
+hook: "Why I think the next release candidate positions MCP for an even brighter future."
 draft: false
 ---
 
@@ -81,4 +81,4 @@ The final spec doesn't land until July, and the v2 SDKs are still pre-alpha. But
 
 I packaged that pattern into an open-source starter, [stateless-mcp-starter](https://github.com/waream2/stateless-mcp-starter): an Express + TypeScript MCP server with no protocol session at all, explicit state handles, pluggable storage (memory, DynamoDB, or Postgres), and tenant-scoped auth context. It runs against today's clients on the production v1 SDK, and it's structured so the move to the stable v2 APIs is a transport swap, not a rewrite.
 
-If you're starting an MCP server today, that you anticipate scaling, start stateless now. The spec is about to agree with that decision.
+If you're starting an MCP server today that you anticipate scaling, start stateless now. The spec is about to agree with that decision.
