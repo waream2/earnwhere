@@ -115,11 +115,17 @@ const { title, date, category, hook } = Astro.props;
 		font-size: var(--text-mono);
 		letter-spacing: 0.04em;
 		color: var(--ink-3);
-		transition: color var(--duration) var(--ease-out);
+		text-decoration-line: underline;
+		text-decoration-color: var(--link-underline);
+		text-decoration-thickness: 1px;
+		text-underline-offset: 0.22em;
+		transition: color var(--duration) var(--ease-out),
+			text-decoration-color var(--duration) var(--ease-out);
 	}
 
 	.back-link:hover {
 		color: var(--accent);
+		text-decoration-color: var(--accent);
 	}
 
 	.back-link span {

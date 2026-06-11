@@ -103,12 +103,16 @@ const { title, summary, image, category, stack, timeline, status, links } = Astr
 
 	.category-link {
 		color: var(--ink-2);
-		text-decoration: none;
+		text-decoration-line: underline;
+		text-decoration-color: var(--link-underline);
+		text-decoration-thickness: 1px;
+		text-underline-offset: 0.22em;
 		transition: color var(--duration) var(--ease-out);
 	}
 
 	.category-link:hover {
 		color: var(--accent);
+		text-decoration-color: var(--accent);
 	}
 
 	h1 {
@@ -188,15 +192,17 @@ const { title, summary, image, category, stack, timeline, status, links } = Astr
 		font-size: var(--text-mono);
 		letter-spacing: 0.04em;
 		color: var(--ink);
-		border-bottom: 1px solid var(--line-strong);
-		padding-bottom: 2px;
+		text-decoration-line: underline;
+		text-decoration-color: var(--link-underline);
+		text-decoration-thickness: 1px;
+		text-underline-offset: 0.22em;
 		transition: color var(--duration) var(--ease-out),
-			border-color var(--duration) var(--ease-out);
+			text-decoration-color var(--duration) var(--ease-out);
 	}
 
 	.project-links a:hover {
 		color: var(--accent);
-		border-bottom-color: var(--accent);
+		text-decoration-color: var(--accent);
 	}
 
 	.prose {
@@ -220,11 +226,17 @@ const { title, summary, image, category, stack, timeline, status, links } = Astr
 		font-size: var(--text-mono);
 		letter-spacing: 0.04em;
 		color: var(--ink-3);
-		transition: color var(--duration) var(--ease-out);
+		text-decoration-line: underline;
+		text-decoration-color: var(--link-underline);
+		text-decoration-thickness: 1px;
+		text-underline-offset: 0.22em;
+		transition: color var(--duration) var(--ease-out),
+			text-decoration-color var(--duration) var(--ease-out);
 	}
 
 	.back-link:hover {
 		color: var(--accent);
+		text-decoration-color: var(--accent);
 	}
 
 	.back-link span {

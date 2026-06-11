@@ -137,12 +137,17 @@ const craft = projects.filter((p) => p.data.category === 'craft');
 		letter-spacing: 0.04em;
 		color: var(--ink-3);
 		text-transform: lowercase;
-		text-decoration: none;
-		transition: color var(--duration) var(--ease-out);
+		text-decoration-line: underline;
+		text-decoration-color: var(--link-underline);
+		text-decoration-thickness: 1px;
+		text-underline-offset: 0.22em;
+		transition: color var(--duration) var(--ease-out),
+			text-decoration-color var(--duration) var(--ease-out);
 	}
 
 	.section-more:hover {
 		color: var(--accent);
+		text-decoration-color: var(--accent);
 	}
 
 	@media (max-width: 640px) {
